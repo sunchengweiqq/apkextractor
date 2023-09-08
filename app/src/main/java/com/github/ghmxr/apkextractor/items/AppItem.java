@@ -17,7 +17,6 @@ import com.github.ghmxr.apkextractor.MyApplication;
 import com.github.ghmxr.apkextractor.R;
 import com.github.ghmxr.apkextractor.utils.EnvironmentUtil;
 import com.github.ghmxr.apkextractor.utils.FileUtil;
-import com.github.ghmxr.apkextractor.utils.PinyinUtil;
 
 import java.io.File;
 
@@ -76,7 +75,7 @@ public class AppItem implements DisplayItem<AppItem>, Parcelable {
         PackageManager packageManager = context.getApplicationContext().getPackageManager();
         this.info = info;
 //        this.fileItem = FileItem.createFileItemInstance(new File(info.applicationInfo.sourceDir));
-        this.fileItem =new StandardFileItem(new File(info.applicationInfo.sourceDir));
+        this.fileItem =new FileItem(new File(info.applicationInfo.sourceDir));
         this.title = packageManager.getApplicationLabel(info.applicationInfo).toString();
         this.size = FileUtil.getFileOrFolderSize(new File(info.applicationInfo.sourceDir));
         this.drawable = packageManager.getApplicationIcon(info.applicationInfo);
@@ -123,7 +122,7 @@ public class AppItem implements DisplayItem<AppItem>, Parcelable {
 
         assert info != null;
 //        fileItem = FileItem.createFileItemInstance(info.applicationInfo.sourceDir);
-        fileItem = new StandardFileItem(info.applicationInfo.sourceDir);
+        fileItem = new FileItem(info.applicationInfo.sourceDir);
         drawable = MyApplication.getApplication().getPackageManager().getApplicationIcon(info.applicationInfo);
     }
 
