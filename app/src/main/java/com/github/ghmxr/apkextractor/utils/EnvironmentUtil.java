@@ -479,24 +479,6 @@ public class EnvironmentUtil {
     }
 
 
-    public static @Nullable
-    String getResolvedPackageNameOfEntryPath(String entryPath) {
-        try {
-            String s = entryPath.toLowerCase();
-            if (s.startsWith("android/data/")) {
-                String relativePath = entryPath.toLowerCase().substring("android/data/".length());
-                return relativePath.substring(0, relativePath.indexOf("/"));
-            }
-            if (s.startsWith("android/obb/")) {
-                String relativePath = entryPath.toLowerCase().substring("android/obb/".length());
-                return relativePath.substring(0, relativePath.indexOf("/"));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public static void clip2Clipboard(String content) {
         try {
             ClipboardManager manager = (ClipboardManager) MyApplication.getApplication().getSystemService(Context.CLIPBOARD_SERVICE);

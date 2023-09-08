@@ -335,37 +335,11 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
         searchAppItemTask.start();
     }
 
-    public void sortGlobalListAndRefresh(int value) {
-        AppItem.sort_config = value;
-        if (adapter != null) adapter.setData(null);
-        swipeRefreshLayout.setRefreshing(true);
-        cb_sys.setEnabled(false);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Collections.sort(Global.app_list);
-                Global.handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (adapter != null) {
-                            adapter.setData(Global.app_list);
-                        }
-                        swipeRefreshLayout.setRefreshing(false);
-                        cb_sys.setEnabled(true);
-                    }
-                });
-            }
-        }).start();
-    }
+
 
     public void setViewMode(int mode) {
         if (adapter == null) return;
         adapter.setLayoutManagerAndView(mode);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void setAndStartRefreshingTask() {

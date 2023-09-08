@@ -50,11 +50,9 @@ public class Constants {
     /**
      * this stands for a String value
      */
-    public static final String PREFERENCE_SAVE_PATH_URI = "savepath_uri";
     /**
      * this stands for a string value
      */
-    public static final String PREFERENCE_SAVE_PATH_SEGMENT = "savepath_segment";
 
     /**
      * this preference stands for a string value;

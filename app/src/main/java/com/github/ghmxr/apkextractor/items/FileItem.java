@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-public abstract class FileItem implements Comparable<FileItem> {
+public abstract class FileItem {
 
     public static int sort_config = 0;
 
@@ -88,47 +88,10 @@ public abstract class FileItem implements Comparable<FileItem> {
         sort_config = value;
     }
 
-    @Override
-    public int compareTo(FileItem o) {
-        switch (sort_config) {
-            default:
-                break;
-            case 0: {
-                try {
-                    if (PinyinUtil.getFirstSpell(String.valueOf(this.getName())).toLowerCase().compareTo(PinyinUtil.getFirstSpell(String.valueOf(o.getName())).toLowerCase()) > 0)
-                        return 1;
-                    if (PinyinUtil.getFirstSpell(String.valueOf(this.getName())).toLowerCase().compareTo(PinyinUtil.getFirstSpell(String.valueOf(o.getName())).toLowerCase()) < 0)
-                        return -1;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            break;
-            case 1: {
-                try {
-                    if (PinyinUtil.getFirstSpell(String.valueOf(this.getName())).toLowerCase().compareTo(PinyinUtil.getFirstSpell(String.valueOf(o.getName())).toLowerCase()) > 0)
-                        return -1;
-                    if (PinyinUtil.getFirstSpell(String.valueOf(this.getName())).toLowerCase().compareTo(PinyinUtil.getFirstSpell(String.valueOf(o.getName())).toLowerCase()) < 0)
-                        return 1;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            break;
-        }
-        return 0;
-    }
 
     @NonNull
     @Override
     public abstract String toString();
 
-    public static FileItem createFileItemInstance(String path) {
-        return new StandardFileItem(path);
-    }
-
-    public static FileItem createFileItemInstance(File file) {
-        return new StandardFileItem(file);
-    }
 
 }

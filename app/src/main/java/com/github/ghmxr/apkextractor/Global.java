@@ -8,11 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.github.ghmxr.apkextractor.items.AppItem;
-import com.github.ghmxr.apkextractor.items.ImportItem;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -28,36 +24,6 @@ public class Global {
      */
     public static final List<AppItem> app_list = new Vector<>();
 
-    private static class ImportItemVector extends Vector<ImportItem> {
-
-        @Override
-        public synchronized boolean add(ImportItem importItem) {
-            if (contains(importItem)) {
-                return false;
-            }
-            return super.add(importItem);
-        }
-
-        /**
-         * 重写此集合实现类addAll方法来去除重复添加的同path的元素
-         */
-        @Override
-        public synchronized boolean addAll(@NonNull Collection<? extends ImportItem> c) {
-            HashSet<ImportItem> hashSet = new HashSet<>(c);
-            Iterator<ImportItem> iterator = hashSet.iterator();
-            ImportItem importItem;
-            while (iterator.hasNext()) {
-                importItem = iterator.next();
-                if (contains(importItem)) {
-                    iterator.remove();
-                }
-            }
-            return super.addAll(hashSet);
-        }
-    }
-
-    public static final String URI_DATA = "content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fdata";
-    public static final String URI_OBB = "content://com.android.externalstorage.documents/tree/primary%3AAndroid%2Fobb";
 
     /**
      * 从API30开始，外置data和obb路径不能直接使用File访问，使用documentFile访问data和obb的版本

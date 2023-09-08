@@ -1,10 +1,7 @@
 package com.github.ghmxr.apkextractor.activities;
 
 import android.content.BroadcastReceiver;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
@@ -12,7 +9,6 @@ import android.content.pm.PackageInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -24,7 +20,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.widget.NestedScrollView;
@@ -37,12 +32,9 @@ import com.github.ghmxr.apkextractor.tasks.GetSignatureInfoTask;
 import com.github.ghmxr.apkextractor.tasks.HashTask;
 import com.github.ghmxr.apkextractor.ui.AssemblyView;
 import com.github.ghmxr.apkextractor.ui.LibraryView;
-import com.github.ghmxr.apkextractor.ui.SignatureView;
 import com.github.ghmxr.apkextractor.ui.ToastManager;
-import com.github.ghmxr.apkextractor.utils.EnvironmentUtil;
 import com.github.ghmxr.apkextractor.utils.SPUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -79,11 +71,8 @@ public class AppDetailActivity extends BaseActivity implements View.OnClickListe
         }
         setContentView(R.layout.activity_app_detail);
 
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar_app_detail));
+        setSupportActionBar(findViewById(R.id.toolbar_app_detail));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setTitle(appItem.getAppName());
-
-//        ((CollapsingToolbarLayout)findViewById(R.id.coll)).
         final NestedScrollView nestedScrollView = findViewById(R.id.nsv);
         final FloatingActionButton floatingActionButton = findViewById(R.id.toTop);
         final ActionBar actionBar = getSupportActionBar();
@@ -92,7 +81,6 @@ public class AppDetailActivity extends BaseActivity implements View.OnClickListe
 
             @Override
             public void onScrollChange(NestedScrollView nestedScrollView, int i, int i1, int i2, int i3) {
-//                Log.e("111","i="+i+",i1="+i1+",i2="+i2+",i3="+i3);
                 actionBar.setTitle(i1 > 0 ? appItem.getAppName() : "");
                 if (i1 > old_y && old_y > 1500) {
                     floatingActionButton.show();
@@ -101,8 +89,6 @@ public class AppDetailActivity extends BaseActivity implements View.OnClickListe
                 }
                 old_y = i1;
             }
-
-
         });
 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
@@ -211,16 +197,12 @@ public class AppDetailActivity extends BaseActivity implements View.OnClickListe
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
-
 
     @Override
     protected void onResume() {
         super.onResume();
-
     }
-
 
     @Override
     public void onClick(View v) {
@@ -267,174 +249,7 @@ public class AppDetailActivity extends BaseActivity implements View.OnClickListe
                 }
             }
             break;
-
-            case R.id.app_detail_package_name_area: {
-                clip2ClipboardAndShowSnackbar(((TextView) findViewById(R.id.app_detail_package_name)).getText().toString());
-            }
-            break;
-            case R.id.app_detail_version_name_area: {
-                clip2ClipboardAndShowSnackbar(((TextView) findViewById(R.id.app_detail_version_name)).getText().toString());
-            }
-            break;
-            case R.id.app_detail_version_code_area: {
-                clip2ClipboardAndShowSnackbar(((TextView) findViewById(R.id.app_detail_version_code)).getText().toString());
-            }
-            break;
-            case R.id.app_detail_size_area: {
-                clip2ClipboardAndShowSnackbar(((TextView) findViewById(R.id.app_detail_size)).getText().toString());
-            }
-            break;
-            case R.id.app_detail_install_time_area: {
-                clip2ClipboardAndShowSnackbar(((TextView) findViewById(R.id.app_detail_install_time)).getText().toString());
-            }
-            break;
-            case R.id.app_detail_update_time_area: {
-                clip2ClipboardAndShowSnackbar(((TextView) findViewById(R.id.app_detail_update_time)).getText().toString());
-            }
-            break;
-            case R.id.app_detail_minimum_api_area: {
-                clip2ClipboardAndShowSnackbar(((TextView) findViewById(R.id.app_detail_minimum_api)).getText().toString());
-            }
-            break;
-            case R.id.app_detail_target_api_area: {
-                clip2ClipboardAndShowSnackbar(((TextView) findViewById(R.id.app_detail_target_api)).getText().toString());
-            }
-            break;
-            case R.id.app_detail_is_system_app_area: {
-                clip2ClipboardAndShowSnackbar(((TextView) findViewById(R.id.app_detail_is_system_app)).getText().toString());
-            }
-            break;
-            case R.id.detail_hash_md5: {
-                final String value = ((TextView) findViewById(R.id.detail_hash_md5_value)).getText().toString();
-                if (!TextUtils.isEmpty(value)) clip2ClipboardAndShowSnackbar(value);
-            }
-            break;
-            case R.id.detail_hash_sha1: {
-                final String value = ((TextView) findViewById(R.id.detail_hash_sha1_value)).getText().toString();
-                if (!TextUtils.isEmpty(value)) clip2ClipboardAndShowSnackbar(value);
-            }
-            break;
-            case R.id.detail_hash_sha256: {
-                final String value = ((TextView) findViewById(R.id.detail_hash_sha256_value)).getText().toString();
-                if (!TextUtils.isEmpty(value)) clip2ClipboardAndShowSnackbar(value);
-            }
-            break;
-            case R.id.detail_hash_crc32: {
-                final String value = ((TextView) findViewById(R.id.detail_hash_crc32_value)).getText().toString();
-                if (!TextUtils.isEmpty(value)) clip2ClipboardAndShowSnackbar(value);
-            }
-            break;
-            case R.id.app_detail_path_area: {
-                clip2ClipboardAndShowSnackbar(((TextView) findViewById(R.id.app_detail_path_value)).getText().toString());
-            }
-            break;
-            case R.id.app_detail_installer_name_area: {
-                clip2ClipboardAndShowSnackbar(((TextView) findViewById(R.id.app_detail_installer_name_value)).getText().toString());
-            }
-            break;
-            case R.id.app_detail_uid_area: {
-                clip2ClipboardAndShowSnackbar(((TextView) findViewById(R.id.app_detail_uid)).getText().toString());
-            }
-            break;
-            case R.id.app_detail_launcher_area: {
-                clip2ClipboardAndShowSnackbar(((TextView) findViewById(R.id.app_detail_launcher_value)).getText().toString());
-            }
-            break;
         }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable final Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 0 && resultCode == RESULT_OK) {
-            if (data != null && data.getData() != null) {
-                if (data.getData().getPath().toLowerCase().endsWith(appItem.getPackageName())) {
-                    takePersistPermission(data.getData());
-                } else {
-                    showAttentionDialog(R.string.dialog_grant_attention_title, R.string.dialog_grant_warn, new Runnable() {
-                        @Override
-                        public void run() {
-                            takePersistPermission(data.getData());
-                        }
-                    });
-                }
-            }
-        }
-    }
-
-    private void clip2ClipboardAndShowSnackbar(String s) {
-        try {
-            ClipboardManager manager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-            manager.setPrimaryClip(ClipData.newPlainText("message", s));
-            Snackbar.make(findViewById(android.R.id.content), getResources().getString(R.string.snack_bar_clipboard), Snackbar.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void takePersistPermission(Uri uri) {
-        if (Build.VERSION.SDK_INT >= 19) {
-            getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-        }
-    }
-
-    private void wrapGrantView(View v1, View v2, final String title, final String message, final Runnable confirmAction) {
-        v1.setVisibility(View.VISIBLE);
-        v1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showGrantDialog(title, message, confirmAction);
-            }
-        });
-        v2.setVisibility(View.GONE);
-    }
-
-    private void showGrantDialog(String title, String message, final Runnable confirmAction) {
-        AlertDialog dialog = new AlertDialog.Builder(AppDetailActivity.this).setTitle(title)
-                .setMessage(message)
-                .setPositiveButton(getResources().getString(R.string.action_confirm), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        confirmAction.run();
-                    }
-                })
-                .setNegativeButton(getResources().getString(R.string.action_cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                })
-                .setNeutralButton(getResources().getString(R.string.more_copy_package_names), null)
-                .create();
-        dialog.show();
-        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EnvironmentUtil.clip2Clipboard(String.valueOf(appItem.getPackageName()));
-                ToastManager.showToast(AppDetailActivity.this, getResources().getString(R.string.snack_bar_clipboard), Toast.LENGTH_SHORT);
-            }
-        });
-    }
-
-    private void showAttentionDialog(int titleResId, int contentMessageId, final Runnable action_confirm) {
-        new AlertDialog.Builder(AppDetailActivity.this).setTitle(getResources().getString(titleResId))
-                .setMessage(getResources().getString(contentMessageId))
-                .setPositiveButton(getResources().getString(R.string.action_confirm), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (action_confirm != null) {
-                            action_confirm.run();
-                        }
-                    }
-                })
-                .setNegativeButton(getResources().getString(R.string.action_cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                })
-                .show();
     }
 
 
@@ -448,7 +263,7 @@ public class AppDetailActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void checkHeightAndFinish() {
-        if (Build.VERSION.SDK_INT >= 28) { //根布局项目太多时低版本Android会引发一个底层崩溃。版本号暂定28
+        if (Build.VERSION.SDK_INT >= 28) {
             ActivityCompat.finishAfterTransition(this);
         } else {
             if (((AssemblyView) findViewById(R.id.app_detail_assembly)).getIsExpanded()) {

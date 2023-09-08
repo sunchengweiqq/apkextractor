@@ -107,20 +107,6 @@ public class PinyinUtil {
         return pybf.toString();
     }
 
-    /**
-     * 获取一个字符串中的所有汉字内容
-     *
-     * @param content 要过滤的字符串
-     * @return 所有汉字字符串
-     */
-    static String getAllChineseCharacters(String content) {
-        try {
-            return content.replaceAll("[^\u4e00-\u9fa5]", "");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
 
     /**
      * 判断一个char是否为汉字（不包含中文符号）

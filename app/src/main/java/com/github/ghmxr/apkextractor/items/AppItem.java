@@ -26,7 +26,6 @@ import java.io.File;
  */
 public class AppItem implements DisplayItem<AppItem>, Parcelable {
 
-    public static transient int sort_config = 0;
 
     public static final Creator<AppItem> CREATOR = new Creator<AppItem>() {
         @Override
@@ -76,7 +75,8 @@ public class AppItem implements DisplayItem<AppItem>, Parcelable {
     public AppItem(@NonNull Context context, @NonNull PackageInfo info) {
         PackageManager packageManager = context.getApplicationContext().getPackageManager();
         this.info = info;
-        this.fileItem = FileItem.createFileItemInstance(new File(info.applicationInfo.sourceDir));
+//        this.fileItem = FileItem.createFileItemInstance(new File(info.applicationInfo.sourceDir));
+        this.fileItem =new StandardFileItem(new File(info.applicationInfo.sourceDir));
         this.title = packageManager.getApplicationLabel(info.applicationInfo).toString();
         this.size = FileUtil.getFileOrFolderSize(new File(info.applicationInfo.sourceDir));
         this.drawable = packageManager.getApplicationIcon(info.applicationInfo);
@@ -122,7 +122,8 @@ public class AppItem implements DisplayItem<AppItem>, Parcelable {
         //static_receivers=in.readHashMap(HashMap.class.getClassLoader());
 
         assert info != null;
-        fileItem = FileItem.createFileItemInstance(info.applicationInfo.sourceDir);
+//        fileItem = FileItem.createFileItemInstance(info.applicationInfo.sourceDir);
+        fileItem = new StandardFileItem(info.applicationInfo.sourceDir);
         drawable = MyApplication.getApplication().getPackageManager().getApplicationIcon(info.applicationInfo);
     }
 
@@ -236,94 +237,4 @@ public class AppItem implements DisplayItem<AppItem>, Parcelable {
         return 0;
     }
 
-
-
-    /**
-     * 排序模式。
-     * 0 - 默认
-     * 1 - 名称升序
-     * 2 - 名称降序
-     * 3 - 大小升序
-     * 4 - 大小降序
-     * 5 - 更新日期升序
-     * 6 - 更新日期降序
-     * 7 - 安装日期升序
-     * 8 - 安装日期降序
-     * 9 - 包名升序
-     * 10 - 包名降序
-     */
-    @Override
-    public int compareTo(@NonNull AppItem o) {
-        switch (sort_config) {
-            default:
-                break;
-            case 1: {
-                try {
-                    if (PinyinUtil.getFirstSpell(title).toLowerCase().compareTo(PinyinUtil.getFirstSpell(o.title).toLowerCase()) > 0)
-                        return 1;
-                    if (PinyinUtil.getFirstSpell(title).toLowerCase().compareTo(PinyinUtil.getFirstSpell(o.title).toLowerCase()) < 0)
-                        return -1;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            break;
-            case 2: {
-                try {
-                    if (PinyinUtil.getFirstSpell(title).toLowerCase().compareTo(PinyinUtil.getFirstSpell(o.title).toLowerCase()) < 0)
-                        return 1;
-                    if (PinyinUtil.getFirstSpell(title).toLowerCase().compareTo(PinyinUtil.getFirstSpell(o.title).toLowerCase()) > 0)
-                        return -1;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            break;
-            case 3: {
-                if (size - o.size > 0) return 1;
-                if (size - o.size < 0) return -1;
-            }
-            break;
-            case 4: {
-                if (size - o.size < 0) return 1;
-                if (size - o.size > 0) return -1;
-            }
-            break;
-            case 5: {
-                if (info.lastUpdateTime - o.info.lastUpdateTime > 0) return 1;
-                if (info.lastUpdateTime - o.info.lastUpdateTime < 0) return -1;
-            }
-            break;
-            case 6: {
-                if (info.lastUpdateTime - o.info.lastUpdateTime < 0) return 1;
-                if (info.lastUpdateTime - o.info.lastUpdateTime > 0) return -1;
-            }
-            break;
-            case 7: {
-                if (info.firstInstallTime - o.info.firstInstallTime > 0) return 1;
-                if (info.firstInstallTime - o.info.firstInstallTime < 0) return -1;
-            }
-            break;
-            case 8: {
-                if (info.firstInstallTime - o.info.firstInstallTime < 0) return 1;
-                if (info.firstInstallTime - o.info.firstInstallTime > 0) return -1;
-            }
-            break;
-            case 9: {
-                if (String.valueOf(getPackageName()).toLowerCase().compareTo(String.valueOf(o.getPackageName()).toLowerCase()) > 0)
-                    return 1;
-                if (String.valueOf(getPackageName()).toLowerCase().compareTo(String.valueOf(o.getPackageName()).toLowerCase()) < 0)
-                    return -1;
-            }
-            break;
-            case 10: {
-                if (String.valueOf(getPackageName()).toLowerCase().compareTo(String.valueOf(o.getPackageName()).toLowerCase()) < 0)
-                    return 1;
-                if (String.valueOf(getPackageName()).toLowerCase().compareTo(String.valueOf(o.getPackageName()).toLowerCase()) > 0)
-                    return -1;
-            }
-            break;
-        }
-        return 0;
-    }
 }

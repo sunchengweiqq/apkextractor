@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.ghmxr.apkextractor.R;
 import com.github.ghmxr.apkextractor.items.AppItem;
 import com.github.ghmxr.apkextractor.items.FileItem;
-import com.github.ghmxr.apkextractor.items.ImportItem;
 import com.github.ghmxr.apkextractor.tasks.GetApkLibraryTask;
 import com.github.ghmxr.apkextractor.utils.EnvironmentUtil;
 import com.google.android.material.snackbar.Snackbar;
@@ -63,17 +62,11 @@ public class LibraryView extends RelativeLayout {
 
     private LibraryInfoCallback libraryInfoCallback;
 
-    public void setLibraryInfoCallback(LibraryInfoCallback libraryInfoCallback) {
-        this.libraryInfoCallback = libraryInfoCallback;
-    }
 
     public void setLibrary(AppItem appItem) {
         refreshLibraryToView(appItem.getFileItem());
     }
 
-    public void setLibrary(ImportItem importItem) {
-        refreshLibraryToView(importItem.getFileItem());
-    }
 
     private void refreshLibraryToView(FileItem fileItem) {
         findViewById(R.id.detail_signature_root).setVisibility(VISIBLE);

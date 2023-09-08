@@ -63,8 +63,7 @@ public class RefreshInstalledListTask extends Thread {
             list_sum.add(new AppItem(context, info));
         }
         if (isInterrupted) return;
-        AppItem.sort_config = settings.getInt(Constants.PREFERENCE_SORT_CONFIG, 0);
-        Collections.sort(list_sum);
+
         Global.app_list.clear();
         Global.app_list.addAll(list_sum);//向全局list保存一个引用
         GetSignatureInfoTask.clearCache();
