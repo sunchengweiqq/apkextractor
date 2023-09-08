@@ -68,21 +68,13 @@ public class AppDetailActivity extends BaseActivity implements View.OnClickListe
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //
         if (savedInstanceState != null) {
             appItem = savedInstanceState.getParcelable("appItem");
         } else {
             appItem = getIntent().getParcelableExtra(EXTRA_PARCELED_APP_ITEM);
-            /*try {
-                synchronized (Global.app_list) {
-                    appItem = Global.getAppItemByPackageNameFromList(Global.app_list, getIntent().getStringExtra(EXTRA_PACKAGE_NAME));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }*/
         }
         if (appItem == null) {
-            ToastManager.showToast(this, "(-_-)The AppItem info is null, try to restart this application.", Toast.LENGTH_SHORT);
+            ToastManager.showToast(this, "AppItem info is null", Toast.LENGTH_SHORT);
             finish();
             return;
         }
@@ -259,7 +251,7 @@ public class AppDetailActivity extends BaseActivity implements View.OnClickListe
             }
             break;
             case R.id.app_detail_export_area: {
-                ToastManager.showToast(AppDetailActivity.this,appItem.getPackageName(), Toast.LENGTH_SHORT);
+                ToastManager.showToast(AppDetailActivity.this, appItem.getPackageName(), Toast.LENGTH_SHORT);
             }
             break;
 

@@ -28,7 +28,6 @@ import com.github.ghmxr.apkextractor.ui.DataObbDialog;
 import com.github.ghmxr.apkextractor.ui.ExportingDialog;
 import com.github.ghmxr.apkextractor.ui.ImportingDataObbDialog;
 import com.github.ghmxr.apkextractor.ui.ImportingDialog;
-import com.github.ghmxr.apkextractor.ui.ShareSelectionDialog;
 import com.github.ghmxr.apkextractor.ui.ToastManager;
 import com.github.ghmxr.apkextractor.utils.DocumentFileUtil;
 import com.github.ghmxr.apkextractor.utils.EnvironmentUtil;
@@ -221,9 +220,7 @@ public class Global {
             public void onExportTaskFinished(List<FileItem> fileItems, String error_message) {
                 dialog.cancel();
                 if (listener != null) listener.onFinished(error_message);
-                if (if_share) {
-                    new ShareSelectionDialog(activity, fileItems).show();
-                }
+
             }
         });
         task.start();
@@ -383,7 +380,6 @@ public class Global {
             for (AppItem item : items) {
                 arrayList.add(FileItem.createFileItemInstance(new File(item.getSourcePath())));
             }
-            new ShareSelectionDialog(activity, arrayList).show();
         }
     }
 
@@ -548,7 +544,6 @@ public class Global {
         for (ImportItem importItem : importItems) {
             arrayList.add(importItem.getFileItem());
         }
-        new ShareSelectionDialog(activity, arrayList).show();
     }
 
     /**

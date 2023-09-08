@@ -37,43 +37,7 @@
             android:name=".activities.AppDetailActivity"
             android:label=""
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".activities.SettingActivity"
-            android:label="@string/activity_settings_title"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".activities.FolderSelectorActivity"
-            android:label="@string/activity_folder_selector_title"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".activities.FileSendActivity"
-            android:theme="@style/CommonTheme"
-            android:exported="true"
-            android:label="@string/activity_send_by_title">
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-                <action android:name="android.intent.action.SEND_MULTIPLE" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="*/*" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".activities.FileReceiveActivity"
-            android:theme="@style/CommonTheme"
-            android:exported="true"
-            android:label="@string/activity_receive_title" />
-        <activity
-            android:name=".activities.PackageDetailActivity"
-            android:label="@string/activity_package_detail"
-            android:exported="true"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="*/*" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".activities.GrantActivity"
             android:theme="@style/CommonTheme" />

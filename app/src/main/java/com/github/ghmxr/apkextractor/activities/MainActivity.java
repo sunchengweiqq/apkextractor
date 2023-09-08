@@ -18,14 +18,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.PermissionChecker;
-import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.github.ghmxr.apkextractor.Constants;
 import com.github.ghmxr.apkextractor.R;
 import com.github.ghmxr.apkextractor.adapters.MyPagerAdapter;
 import com.github.ghmxr.apkextractor.fragments.AppFragment;
-import com.github.ghmxr.apkextractor.fragments.ImportFragment;
 import com.github.ghmxr.apkextractor.ui.AppItemSortConfigDialog;
 import com.github.ghmxr.apkextractor.ui.ImportItemSortConfigDialog;
 import com.github.ghmxr.apkextractor.ui.SortConfigDialogCallback;
@@ -37,7 +35,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         {
 
     private final AppFragment appFragment = new AppFragment();
-    private final ImportFragment importFragment = new ImportFragment();
 
     private int currentSelection = 0;
     private boolean isSearchMode = false;
@@ -85,7 +82,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 cancelView.setVisibility(s.length() > 0 ? View.VISIBLE : View.INVISIBLE);
                 if (!isSearchMode) return;
                 appFragment.updateSearchModeKeywords(s.toString());
-                importFragment.updateSearchModeKeywords(s.toString());
             }
         });
         cancelView.setOnClickListener(new View.OnClickListener() {
@@ -100,7 +96,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             e.printStackTrace();
         }
 
-        viewPager.setAdapter(new MyPagerAdapter(this, getSupportFragmentManager(), appFragment, importFragment));
+        viewPager.setAdapter(new MyPagerAdapter(this, getSupportFragmentManager(), appFragment));
         tabLayout.setupWithViewPager(viewPager, true);
         viewPager.addOnPageChangeListener(this);
 
@@ -184,12 +180,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 editor.putInt(Constants.PREFERENCE_MAIN_PAGE_VIEW_MODE, result_app);
                 editor.apply();
                 appFragment.setViewMode(result_app);
-            } else if (currentSelection == 1) {
-                final int mode_pak = settings.getInt(Constants.PREFERENCE_MAIN_PAGE_VIEW_MODE_IMPORT, Constants.PREFERENCE_MAIN_PAGE_VIEW_MODE_IMPORT_DEFAULT);
-                final int result_pak = mode_pak == 0 ? 1 : 0;
-                editor.putInt(Constants.PREFERENCE_MAIN_PAGE_VIEW_MODE_IMPORT, result_pak);
-                editor.apply();
-                importFragment.setViewMode(result_pak);
             }
         }
 
@@ -202,14 +192,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                     }
                 });
                 appItemSortConfigDialog.show();
-            } else if (currentSelection == 1) {
-                ImportItemSortConfigDialog importItemSortConfigDialog = new ImportItemSortConfigDialog(this, new SortConfigDialogCallback() {
-                    @Override
-                    public void onOptionSelected(int value) {
-                        importFragment.sortGlobalListAndRefresh(value);
-                    }
-                });
-                importItemSortConfigDialog.show();
             }
         }
         return super.onOptionsItemSelected(item);
@@ -229,7 +211,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         switch (requestCode) {
             default: {
                 appFragment.onActivityResult(requestCode, resultCode, data);
-                importFragment.onActivityResult(requestCode, resultCode, data);
             }
             break;
             case REQUEST_CODE_SETTINGS: {
@@ -254,7 +235,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         setActionbarDisplayCustomView(true);
         setMenuVisible(false);
         appFragment.setSearchMode(true);
-        importFragment.setSearchMode(true);
         EnvironmentUtil.showInputMethod(edit_search);
     }
 
@@ -264,7 +244,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         edit_search.setText("");
         setActionbarDisplayCustomView(false);
         appFragment.setSearchMode(false);
-        importFragment.setSearchMode(false);
         EnvironmentUtil.hideInputMethod(this);
     }
 
