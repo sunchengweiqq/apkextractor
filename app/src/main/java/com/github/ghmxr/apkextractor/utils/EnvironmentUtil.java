@@ -1,56 +1,36 @@
 package com.github.ghmxr.apkextractor.utils;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.PixelFormat;
-import android.graphics.drawable.Drawable;
-import android.net.DhcpInfo;
 import android.net.Uri;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.text.format.Formatter;
 import android.text.style.ForegroundColorSpan;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
-import androidx.documentfile.provider.DocumentFile;
 
 import com.github.ghmxr.apkextractor.Constants;
-import com.github.ghmxr.apkextractor.Global;
 import com.github.ghmxr.apkextractor.MyApplication;
 import com.github.ghmxr.apkextractor.R;
 import com.github.ghmxr.apkextractor.tasks.GetApkLibraryTask;
-import com.github.ghmxr.apkextractor.ui.ToastManager;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -138,9 +118,9 @@ public class EnvironmentUtil {
             if (JarEntry != null) {
                 byte[] readBuffer = new byte[8192];
                 InputStream is = new BufferedInputStream(JarFile.getInputStream(JarEntry));
-//                while (is.read(readBuffer, 0, readBuffer.length) != -1) {
-//                    //notusing
-//                }
+                while (is.read(readBuffer, 0, readBuffer.length) != -1) {
+
+                }
                 Certificate[] certs = JarEntry.getCertificates();
                 if (certs != null && certs.length > 0) {
                     //获取证书
