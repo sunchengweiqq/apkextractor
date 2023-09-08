@@ -127,13 +127,10 @@ public class EnvironmentUtil {
                     X509Certificate x509cert = (X509Certificate) certs[0];
                     //获取证书发行者
                     issuerDN = x509cert.getIssuerDN().toString();
-                    //System.out.println("发行者：" + issuerDN);
                     //获取证书所有者
                     subjectDN = x509cert.getSubjectDN().toString();
-                    //System.out.println("所有者：" + subjectDN);
                     //证书序列号
                     serial = x509cert.getSerialNumber().toString();
-                    //System.out.println("publicKey：" + publicKey);
                     //证书起始有效期
                     notBefore = x509cert.getNotBefore().toString();
                     //证书结束有效期
