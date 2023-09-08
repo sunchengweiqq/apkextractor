@@ -66,9 +66,6 @@ public class AppItem implements DisplayItem<AppItem>, Parcelable {
 
     //private HashMap<String, List<String>> static_receivers;
 
-    //仅当构造ExportTask时用
-    public transient boolean exportData = false;
-    public transient boolean exportObb = false;
 
     /**
      * 初始化一个全新的AppItem
@@ -115,25 +112,6 @@ public class AppItem implements DisplayItem<AppItem>, Parcelable {
         this.launchingClass = launchingClass;
     }
 
-    /**
-     * 构造一个本Item的副本，用于ExportTask导出应用。
-     *
-     * @param wrapper   用于创造副本的目标
-     * @param flag_data 指定是否导出data
-     * @param flag_obb  指定是否导出obb
-     */
-    public AppItem(AppItem wrapper, boolean flag_data, boolean flag_obb) {
-        this.title = wrapper.title;
-        this.size = wrapper.size;
-        this.info = wrapper.info;
-        this.fileItem = wrapper.fileItem;
-        this.drawable = wrapper.drawable;
-        this.installSource = wrapper.installSource;
-        this.launchingClass = wrapper.launchingClass;
-        this.exportData = flag_data;
-        this.exportObb = flag_obb;
-        //this.signatureInfos=wrapper.signatureInfos;
-    }
 
     private AppItem(Parcel in) {
         title = in.readString();
@@ -155,7 +133,6 @@ public class AppItem implements DisplayItem<AppItem>, Parcelable {
         dest.writeString(installSource);
         dest.writeString(launchingClass);
         dest.writeParcelable(info, 0);
-        //dest.writeMap(static_receivers);
     }
 
     @Override

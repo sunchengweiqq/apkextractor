@@ -28,34 +28,9 @@ public class OutputUtil {
                 + "/" + getWriteFileNameForAppItem(context, item, extension, sequence_number);
     }
 
-    public static @Nullable
-    DocumentFile getWritingDocumentFileForAppItem(@NonNull Context context, @NonNull AppItem appItem, @NonNull String extension, int sequence_number) throws Exception {
-        String writingFileName = getWriteFileNameForAppItem(context, appItem, extension, sequence_number);
-        DocumentFile parent = getExportPathDocumentFile(context);
-        DocumentFile documentFile = DocumentFileUtil.findDocumentFile(parent, writingFileName);
-        if (documentFile != null && documentFile.exists()) documentFile.delete();
-        return parent.createFile("apk".equalsIgnoreCase(extension) ? "application/vnd.android.package-archive" : "application/x-zip-compressed", writingFileName);
-    }
 
-    /*public static @Nullable DocumentFile getWritingDocumentFileForFileName(@NonNull Context context,@NonNull String fileName) throws Exception{
-        DocumentFile parent=getExportPathDocumentFile(context);
-        DocumentFile documentFile=parent.findFile(fileName);
-        if(documentFile!=null&&documentFile.exists())documentFile.delete();
-        return parent.createFile(EnvironmentUtil.getFileExtensionName(fileName).equalsIgnoreCase("apk")?
-                "application/vnd.android.package-archive":"application/x-zip-compressed",
-                fileName);
-    }*/
 
-    /**
-     * 创建一个按照命名规则命名的写入documentFile的输出流
-     *
-     * @param documentFile 要写入的documentFile
-     * @return 已按照命名规则的写入的documentFile输出流
-     */
-    public static @Nullable
-    OutputStream getOutputStreamForDocumentFile(@NonNull Context context, @NonNull DocumentFile documentFile) throws Exception {
-        return context.getContentResolver().openOutputStream(documentFile.getUri());
-    }
+
 
     /**
      * 获取导出根目录的documentFile
