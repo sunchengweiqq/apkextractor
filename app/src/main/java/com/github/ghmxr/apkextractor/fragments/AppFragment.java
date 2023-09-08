@@ -1,13 +1,9 @@
 package com.github.ghmxr.apkextractor.fragments;
 
 import android.content.BroadcastReceiver;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.format.Formatter;
@@ -15,17 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
@@ -43,18 +35,13 @@ import com.github.ghmxr.apkextractor.adapters.RecyclerViewAdapter;
 import com.github.ghmxr.apkextractor.items.AppItem;
 import com.github.ghmxr.apkextractor.tasks.RefreshInstalledListTask;
 import com.github.ghmxr.apkextractor.tasks.SearchAppItemTask;
-import com.github.ghmxr.apkextractor.ui.ToastManager;
-import com.github.ghmxr.apkextractor.utils.EnvironmentUtil;
 import com.github.ghmxr.apkextractor.utils.SPUtil;
 import com.github.ghmxr.apkextractor.utils.StorageUtil;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class AppFragment extends Fragment implements View.OnClickListener, RefreshInstalledListTask.RefreshInstalledListTaskCallback
+public class AppFragment extends Fragment implements RefreshInstalledListTask.RefreshInstalledListTaskCallback
         , RecyclerViewAdapter.ListAdapterOperationListener<AppItem>, SearchAppItemTask.SearchTaskCompletedCallback {
 
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -64,10 +51,9 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
     private ProgressBar progressBar;
     private TextView tv_progress;
     private ViewGroup viewGroup_no_content;
-    private CardView card_multi_select, card_normal;
+    private CardView card_normal;
     private CheckBox cb_sys;
-    private TextView tv_space_remaining, tv_multi_select_head;
-    private Button btn_select_all, btn_export, btn_share, btn_more;
+    private TextView tv_space_remaining;
     private boolean isScrollable = false;
     private boolean isSearchMode = false;
 
@@ -78,19 +64,25 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
         @Override
         public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            if (getActivity() == null) return;
-            if (adapter == null) return;
-            if (card_normal == null || card_multi_select == null) return;
+            if (getActivity() == null) {
+                return;
+            }
+            if (adapter == null) {
+                return;
+            }
+            if (card_normal == null) {
+                return;
+            }
 
             if (!recyclerView.canScrollVertically(-1)) {
                 // onScrolledToTop();
             } else if (!recyclerView.canScrollVertically(1)) {
                 // onScrolledToBottom();
-                 if (isScrollable && card_normal.getVisibility() != View.GONE && !isSearchMode)
+                if (isScrollable && card_normal.getVisibility() != View.GONE && !isSearchMode)
                     setViewVisibilityWithAnimation(card_normal, View.GONE);
             } else if (dy < 0) {
                 // onScrolledUp();
-                  if (isScrollable && card_normal.getVisibility() != View.VISIBLE && !isSearchMode)
+                if (isScrollable && card_normal.getVisibility() != View.VISIBLE && !isSearchMode)
                     setViewVisibilityWithAnimation(card_normal, View.VISIBLE);
             } else if (dy > 0) {
                 // onScrolledDown();
@@ -219,15 +211,6 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
         }
     }
 
-    @Override
-    public void onClick(View v) {
-        if (getActivity() == null) return;
-        switch (v.getId()) {
-            default:
-                break;
-
-        }
-    }
 
     @Override
     public void onRefreshProgressStarted(int total) {
@@ -256,8 +239,6 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
         viewGroup_no_content.setVisibility(appList.size() == 0 ? View.VISIBLE : View.GONE);
         swipeRefreshLayout.setRefreshing(false);
         swipeRefreshLayout.setEnabled(true);
-        /*int mode= SPUtil.getGlobalSharedPreferences(getActivity()).getInt(Constants.PREFERENCE_MAIN_PAGE_VIEW_MODE
-                ,Constants.PREFERENCE_MAIN_PAGE_VIEW_MODE_DEFAULT);*/
         adapter = new RecyclerViewAdapter<>(getActivity()
                 , recyclerView
                 , appList
@@ -281,7 +262,6 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
         }
     }
 
-
     @Override
     public void onSearchTaskCompleted(@NonNull List<AppItem> appItems, @NonNull String keyword) {
         if (getActivity() == null) return;
@@ -291,26 +271,26 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
         adapter.setHighlightKeyword(keyword);
     }
 
-
     public void setSearchMode(boolean b) {
         this.isSearchMode = b;
         if (b) {
             if (card_normal != null) card_normal.setVisibility(View.GONE);
         } else {
-             setViewVisibilityWithAnimation(card_normal, View.VISIBLE);
+            setViewVisibilityWithAnimation(card_normal, View.VISIBLE);
             if (adapter != null) adapter.setHighlightKeyword(null);
         }
         if (swipeRefreshLayout != null) {
             if (!b) {
-                if (adapter != null ) {
+                if (adapter != null) {
                     swipeRefreshLayout.setEnabled(true);
                 }
             } else {
                 swipeRefreshLayout.setEnabled(false);
             }
-
         }
-        if (adapter == null) return;
+        if (adapter == null) {
+            return;
+        }
         if (b) {
             adapter.setData(null);
         } else {
@@ -318,32 +298,34 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
         }
     }
 
-    public boolean getIsSearchMode() {
-        return isSearchMode;
-    }
 
     private SearchAppItemTask searchAppItemTask;
 
     public void updateSearchModeKeywords(@NonNull String key) {
-        if (getActivity() == null) return;
-        if (adapter == null) return;
-        if (!isSearchMode) return;
-        if (searchAppItemTask != null) searchAppItemTask.setInterrupted();
+        if (getActivity() == null) {
+            return;
+        }
+        if (adapter == null) {
+            return;
+        }
+        if (!isSearchMode) {
+            return;
+        }
+        if (searchAppItemTask != null) {
+            searchAppItemTask.setInterrupted();
+        }
         searchAppItemTask = new SearchAppItemTask(Global.app_list, key, this);
         adapter.setData(null);
         swipeRefreshLayout.setRefreshing(true);
         searchAppItemTask.start();
+
     }
 
-
-
-    public void setViewMode(int mode) {
-        if (adapter == null) return;
-        adapter.setLayoutManagerAndView(mode);
-    }
 
     private void setAndStartRefreshingTask() {
-        if (getActivity() == null) return;
+        if (getActivity() == null) {
+            return;
+        }
         if (refreshInstalledListTask != null) refreshInstalledListTask.setInterrupted();
         refreshInstalledListTask = new RefreshInstalledListTask(this);
         swipeRefreshLayout.setRefreshing(true);
@@ -356,13 +338,17 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
     private void setViewVisibilityWithAnimation(View view, int visibility) {
         if (getActivity() == null) return;
         if (visibility == View.GONE) {
-            if (view.getVisibility() != View.GONE)
+            if (view.getVisibility() != View.GONE) {
                 view.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.exit_300));
-            view.setVisibility(View.GONE);
+            } else {
+                view.setVisibility(View.GONE);
+            }
         } else if (visibility == View.VISIBLE) {
-            if (view.getVisibility() != View.VISIBLE)
+            if (view.getVisibility() != View.VISIBLE) {
                 view.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.entry_300));
-            view.setVisibility(View.VISIBLE);
+            } else {
+                view.setVisibility(View.VISIBLE);
+            }
         }
     }
 

@@ -17,7 +17,6 @@ public class SearchAppItemTask extends Thread {
     private final ArrayList<AppItem> result_appItems = new ArrayList<>();
     private final SearchTaskCompletedCallback callback;
 
-
     public SearchAppItemTask(List<AppItem> appItems, @NonNull String info, @NonNull SearchTaskCompletedCallback callback) {
         this.search_info = info.trim().toLowerCase();
         this.appItemList.addAll(appItems);

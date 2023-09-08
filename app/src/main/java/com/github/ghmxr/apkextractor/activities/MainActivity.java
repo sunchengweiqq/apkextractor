@@ -167,18 +167,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             openSearchMode();
         }
 
-        if (id == R.id.action_view) {
-            if (isSearchMode) return false;
-            final SharedPreferences settings = SPUtil.getGlobalSharedPreferences(this);
-            final SharedPreferences.Editor editor = settings.edit();
-            if (currentSelection == 0) {
-                final int mode_app = settings.getInt(Constants.PREFERENCE_MAIN_PAGE_VIEW_MODE, Constants.PREFERENCE_MAIN_PAGE_VIEW_MODE_DEFAULT);
-                final int result_app = mode_app == 0 ? 1 : 0;
-                editor.putInt(Constants.PREFERENCE_MAIN_PAGE_VIEW_MODE, result_app);
-                editor.apply();
-                appFragment.setViewMode(result_app);
-            }
-        }
 
         return super.onOptionsItemSelected(item);
     }

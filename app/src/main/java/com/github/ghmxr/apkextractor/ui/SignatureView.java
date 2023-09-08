@@ -96,37 +96,6 @@ public class SignatureView extends LinearLayout {
         return tv_sha256;
     }
 
-    public LinearLayout getLinearLayout_sub() {
-        return linearLayout_sub;
-    }
-
-    public LinearLayout getLinearLayout_iss() {
-        return linearLayout_iss;
-    }
-
-    public LinearLayout getLinearLayout_serial() {
-        return linearLayout_serial;
-    }
-
-    public LinearLayout getLinearLayout_start() {
-        return linearLayout_start;
-    }
-
-    public LinearLayout getLinearLayout_end() {
-        return linearLayout_end;
-    }
-
-    public LinearLayout getLinearLayout_md5() {
-        return linearLayout_md5;
-    }
-
-    public LinearLayout getLinearLayout_sha1() {
-        return linearLayout_sha1;
-    }
-
-    public LinearLayout getLinearLayout_sha256() {
-        return linearLayout_sha256;
-    }
 
     public ViewGroup getRoot() {
         return root;

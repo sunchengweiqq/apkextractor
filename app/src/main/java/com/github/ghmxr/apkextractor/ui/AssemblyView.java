@@ -113,12 +113,10 @@ public class AssemblyView extends LinearLayout implements View.OnClickListener {
                 if (linearLayout_permission.getVisibility() == View.VISIBLE) {
                     permission_arrow.setRotation(0);
                     linearLayout_permission.setVisibility(View.GONE);
-//                    rv_permission.setVisibility(View.GONE);
                     TransitionManager.beginDelayedTransition(this);
                 } else {
                     findViewById(R.id.detail_permission_area_arrow).setRotation(90);
                     linearLayout_permission.setVisibility(View.VISIBLE);
-//                    rv_permission.setVisibility(View.VISIBLE);
                     TransitionManager.beginDelayedTransition(this);
                 }
             }
@@ -127,12 +125,10 @@ public class AssemblyView extends LinearLayout implements View.OnClickListener {
                 if (linearLayout_activity.getVisibility() == View.VISIBLE) {
                     activity_arrow.setRotation(0);
                     linearLayout_activity.setVisibility(View.GONE);
-//                    rv_activity.setVisibility(View.GONE);
                     TransitionManager.beginDelayedTransition(this);
                 } else {
                     activity_arrow.setRotation(90);
                     linearLayout_activity.setVisibility(View.VISIBLE);
-//                    rv_activity.setVisibility(View.VISIBLE);
                     TransitionManager.beginDelayedTransition(this);
                 }
             }
@@ -141,12 +137,10 @@ public class AssemblyView extends LinearLayout implements View.OnClickListener {
                 if (linearLayout_receiver.getVisibility() == View.VISIBLE) {
                     receiver_arrow.setRotation(0);
                     linearLayout_receiver.setVisibility(View.GONE);
-//                    rv_receiver.setVisibility(View.GONE);
                     TransitionManager.beginDelayedTransition(this);
                 } else {
                     receiver_arrow.setRotation(90);
                     linearLayout_receiver.setVisibility(View.VISIBLE);
-//                    rv_receiver.setVisibility(View.VISIBLE);
                     TransitionManager.beginDelayedTransition(this);
                 }
             }
@@ -155,12 +149,10 @@ public class AssemblyView extends LinearLayout implements View.OnClickListener {
                 if (linearLayout_loader.getVisibility() == View.VISIBLE) {
                     loader_arrow.setRotation(0);
                     linearLayout_loader.setVisibility(View.GONE);
-//                    rv_static_loader.setVisibility(View.GONE);
                     TransitionManager.beginDelayedTransition(this);
                 } else {
                     loader_arrow.setRotation(90);
                     linearLayout_loader.setVisibility(View.VISIBLE);
-//                    rv_static_loader.setVisibility(View.VISIBLE);
                     TransitionManager.beginDelayedTransition(this);
                 }
             }
@@ -169,12 +161,10 @@ public class AssemblyView extends LinearLayout implements View.OnClickListener {
                 if (linearLayout_service.getVisibility() == View.VISIBLE) {
                     service_arrow.setRotation(0);
                     linearLayout_service.setVisibility(View.GONE);
-//                    rv_service.setVisibility(View.GONE);
                     TransitionManager.beginDelayedTransition(this);
                 } else {
                     service_arrow.setRotation(90);
                     linearLayout_service.setVisibility(View.VISIBLE);
-//                    rv_service.setVisibility(View.VISIBLE);
                     TransitionManager.beginDelayedTransition(this);
                 }
             }
@@ -183,12 +173,10 @@ public class AssemblyView extends LinearLayout implements View.OnClickListener {
                 if (linearLayout_provider.getVisibility() == View.VISIBLE) {
                     provider_arrow.setRotation(0);
                     linearLayout_provider.setVisibility(View.GONE);
-//                    rv_provider.setVisibility(View.GONE);
                     TransitionManager.beginDelayedTransition(this);
                 } else {
                     provider_arrow.setRotation(90);
                     linearLayout_provider.setVisibility(View.VISIBLE);
-//                    rv_provider.setVisibility(View.VISIBLE);
                     TransitionManager.beginDelayedTransition(this);
                 }
             }

@@ -1,9 +1,6 @@
 package com.github.ghmxr.apkextractor.tasks;
 
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.view.View;
@@ -11,11 +8,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.github.ghmxr.apkextractor.Global;
-import com.github.ghmxr.apkextractor.R;
 import com.github.ghmxr.apkextractor.ui.SignatureView;
-import com.github.ghmxr.apkextractor.utils.CommonUtil;
 import com.github.ghmxr.apkextractor.utils.EnvironmentUtil;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -84,69 +78,12 @@ public class GetSignatureInfoTask extends Thread {
                 signatureView.getTv_md5().setText(md5);
                 signatureView.getTv_sha1().setText(sha1);
                 signatureView.getTv_sha256().setText(sha256);
-                signatureView.getLinearLayout_sub().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clip2ClipboardAndShowSnackbar(signatureView.getTv_sub_value().getText().toString());
-                    }
-                });
-                signatureView.getLinearLayout_iss().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clip2ClipboardAndShowSnackbar(signatureView.getTv_iss_value().getText().toString());
-                    }
-                });
-                signatureView.getLinearLayout_serial().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clip2ClipboardAndShowSnackbar(signatureView.getTv_serial_value().getText().toString());
-                    }
-                });
-                signatureView.getLinearLayout_start().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clip2ClipboardAndShowSnackbar(signatureView.getTv_start().getText().toString());
-                    }
-                });
-                signatureView.getLinearLayout_end().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clip2ClipboardAndShowSnackbar(signatureView.getTv_end().getText().toString());
-                    }
-                });
-                signatureView.getLinearLayout_md5().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clip2ClipboardAndShowSnackbar(signatureView.getTv_md5().getText().toString());
-                    }
-                });
-                signatureView.getLinearLayout_sha1().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clip2ClipboardAndShowSnackbar(signatureView.getTv_sha1().getText().toString());
-                    }
-                });
-                signatureView.getLinearLayout_sha256().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clip2ClipboardAndShowSnackbar(signatureView.getTv_sha256().getText().toString());
-                    }
-                });
                 signatureView.getRoot().setVisibility(View.VISIBLE);
                 callback.onCompleted();
             }
         });
     }
 
-    private void clip2ClipboardAndShowSnackbar(String s) {
-        try {
-            ClipboardManager manager = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-            manager.setPrimaryClip(ClipData.newPlainText("message", s));
-            Snackbar.make(activity.findViewById(android.R.id.content), activity.getResources().getString(R.string.snack_bar_clipboard), Snackbar.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public static void clearCache() {
         sign_infos_cache.clear();
@@ -155,12 +92,6 @@ public class GetSignatureInfoTask extends Thread {
         sha256_cache.clear();
     }
 
-    public static void clearCacheOfPath(String path) {
-        CommonUtil.removeKeyFromMapIgnoreCase(sign_infos_cache, path);
-        CommonUtil.removeKeyFromMapIgnoreCase(md5_cache, path);
-        CommonUtil.removeKeyFromMapIgnoreCase(sha1_cache, path);
-        CommonUtil.removeKeyFromMapIgnoreCase(sha256_cache, path);
-    }
 
     public interface CompletedCallback {
         void onCompleted();

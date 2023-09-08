@@ -23,7 +23,7 @@ import java.io.File;
 /**
  * 单个应用项的所有信息
  */
-public class AppItem implements DisplayItem<AppItem>, Parcelable {
+public class AppItem implements Parcelable, DisplayItem<AppItem> {
 
 
     public static final Creator<AppItem> CREATOR = new Creator<AppItem>() {
@@ -75,7 +75,7 @@ public class AppItem implements DisplayItem<AppItem>, Parcelable {
         PackageManager packageManager = context.getApplicationContext().getPackageManager();
         this.info = info;
 //        this.fileItem = FileItem.createFileItemInstance(new File(info.applicationInfo.sourceDir));
-        this.fileItem =new FileItem(new File(info.applicationInfo.sourceDir));
+        this.fileItem = new FileItem(new File(info.applicationInfo.sourceDir));
         this.title = packageManager.getApplicationLabel(info.applicationInfo).toString();
         this.size = FileUtil.getFileOrFolderSize(new File(info.applicationInfo.sourceDir));
         this.drawable = packageManager.getApplicationIcon(info.applicationInfo);
@@ -135,22 +135,18 @@ public class AppItem implements DisplayItem<AppItem>, Parcelable {
         dest.writeParcelable(info, 0);
     }
 
-    @Override
     public Drawable getIconDrawable() {
         return drawable;
     }
 
-    @Override
     public String getTitle() {
         return title + "(" + getVersionName() + ")";
     }
 
-    @Override
     public String getDescription() {
         return info.packageName;
     }
 
-    @Override
     public boolean isRedMarked() {
         return (info.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) > 0;
     }
@@ -186,7 +182,6 @@ public class AppItem implements DisplayItem<AppItem>, Parcelable {
     /**
      * 获取应用大小（源文件），单位字节
      */
-    @Override
     public long getSize() {
         return size;
     }
@@ -205,9 +200,6 @@ public class AppItem implements DisplayItem<AppItem>, Parcelable {
         return info.versionCode;
     }
 
-    /**
-     * 获取本应用Item对应的PackageInfo实例
-     */
     public PackageInfo getPackageInfo() {
         return info;
     }
@@ -223,13 +215,6 @@ public class AppItem implements DisplayItem<AppItem>, Parcelable {
     public FileItem getFileItem() {
         return fileItem;
     }
-
-    /*
-     * 长度为8
-     */
-    /*public String[] getSignatureInfos() {
-        return signatureInfos;
-    }*/
 
     @Override
     public int describeContents() {

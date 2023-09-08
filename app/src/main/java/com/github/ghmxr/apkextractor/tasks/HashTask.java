@@ -9,8 +9,6 @@ import com.github.ghmxr.apkextractor.utils.FileUtil;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.github.ghmxr.apkextractor.utils.CommonUtil.removeKeyFromMapIgnoreCase;
-
 public class HashTask extends Thread {
 
     private static final ConcurrentHashMap<String, String> md5_cache = new ConcurrentHashMap<>();
@@ -112,13 +110,6 @@ public class HashTask extends Thread {
         sha1_cache.clear();
         sha256_cache.clear();
         crc32_cache.clear();
-    }
-
-    public static void clearResultCacheOfPath(String path) {
-        removeKeyFromMapIgnoreCase(md5_cache, path);
-        removeKeyFromMapIgnoreCase(sha1_cache, path);
-        removeKeyFromMapIgnoreCase(sha256_cache, path);
-        removeKeyFromMapIgnoreCase(crc32_cache, path);
     }
 
 }

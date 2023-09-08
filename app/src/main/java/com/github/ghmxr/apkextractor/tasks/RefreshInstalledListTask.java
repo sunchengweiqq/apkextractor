@@ -1,7 +1,6 @@
 package com.github.ghmxr.apkextractor.tasks;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -15,7 +14,6 @@ import com.github.ghmxr.apkextractor.items.AppItem;
 import com.github.ghmxr.apkextractor.utils.SPUtil;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,9 +35,8 @@ public class RefreshInstalledListTask extends Thread {
     @Override
     public void run() {
         PackageManager manager = context.getApplicationContext().getPackageManager();
-        SharedPreferences settings = SPUtil.getGlobalSharedPreferences(context);
         final List<PackageInfo> list;
-        synchronized (RefreshInstalledListTask.class) {//加锁是在多线程请求已安装列表时PackageManager可能会抛异常 ParceledListSlice: Failure retrieving array;
+        synchronized (RefreshInstalledListTask.class) {
             list = new ArrayList<>(manager.getInstalledPackages(0));
         }
         Global.handler.post(new Runnable() {
@@ -49,7 +46,9 @@ public class RefreshInstalledListTask extends Thread {
             }
         });
         for (int i = 0; i < list.size(); i++) {
-            if (isInterrupted) return;
+            if (isInterrupted) {
+                return;
+            }
             PackageInfo info = list.get(i);
             boolean info_is_system_app = ((info.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) > 0);
             final int current = i + 1;
@@ -62,10 +61,12 @@ public class RefreshInstalledListTask extends Thread {
             if (!flag_system && info_is_system_app) continue;
             list_sum.add(new AppItem(context, info));
         }
-        if (isInterrupted) return;
+        if (isInterrupted) {
+            return;
+        }
 
         Global.app_list.clear();
-        Global.app_list.addAll(list_sum);//向全局list保存一个引用
+        Global.app_list.addAll(list_sum);
         GetSignatureInfoTask.clearCache();
         GetApkLibraryTask.clearOutsidePackageCache();
 

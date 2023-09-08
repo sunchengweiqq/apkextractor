@@ -32,7 +32,6 @@ public class LibraryView extends RelativeLayout {
     View headArea;
     ImageView arrow;
     TextView title;
-    //    CardView soCard;
     TextView soCardText;
 
     public LibraryView(Context context) {
@@ -51,7 +50,6 @@ public class LibraryView extends RelativeLayout {
         headArea = findViewById(R.id.native_library_head);
         arrow = findViewById(R.id.native_library_arrow);
         title = findViewById(R.id.native_library_title);
-//        soCard=findViewById(R.id.soCard);
         soCardText = findViewById(R.id.soName);
         recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
     }
@@ -105,7 +103,6 @@ public class LibraryView extends RelativeLayout {
                 });
                 GetApkLibraryTask.LibraryType showingLibraryType = EnvironmentUtil.getShowingLibraryType(libraryInfo);
                 if (showingLibraryType != null) {
-//                    soCard.setVisibility(VISIBLE);
                     soCardText.setVisibility(VISIBLE);
                     soCardText.setText(showingLibraryType.toString());
                     soCardText.setBackgroundResource(GetApkLibraryTask.is64BitAbi(showingLibraryType) ? R.drawable.shape_card_64bit_abi
@@ -144,21 +141,6 @@ public class LibraryView extends RelativeLayout {
             if (i == getItemCount() - 1) {
                 viewHolder.dividingLine.setVisibility(INVISIBLE);
             }
-            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        final Context context = getContext();
-                        ClipboardManager manager = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                        manager.setPrimaryClip(ClipData.newPlainText("message", libraryName));
-                        if (context instanceof Activity) {
-                            Snackbar.make(((Activity) context).findViewById(android.R.id.content), getResources().getString(R.string.snack_bar_clipboard), Snackbar.LENGTH_SHORT).show();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
         }
 
         @Override

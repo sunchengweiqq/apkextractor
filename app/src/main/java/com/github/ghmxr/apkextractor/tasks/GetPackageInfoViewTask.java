@@ -1,10 +1,6 @@
 package com.github.ghmxr.apkextractor.tasks;
 
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ComponentInfo;
@@ -17,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -25,11 +20,8 @@ import com.github.ghmxr.apkextractor.Constants;
 import com.github.ghmxr.apkextractor.Global;
 import com.github.ghmxr.apkextractor.R;
 import com.github.ghmxr.apkextractor.ui.AssemblyView;
-import com.github.ghmxr.apkextractor.ui.ToastManager;
-import com.github.ghmxr.apkextractor.utils.CommonUtil;
 import com.github.ghmxr.apkextractor.utils.EnvironmentUtil;
 import com.github.ghmxr.apkextractor.utils.SPUtil;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,26 +47,10 @@ public class GetPackageInfoViewTask extends Thread {
     }
 
     public static class AssembleItem<T extends ComponentInfo> {
-        public static class StringComponent extends ComponentInfo {
-            public StringComponent(String name) {
-                this.name = name;
-            }
-        }
-
         public T item;
         public View.OnClickListener clickAction;
         public View.OnLongClickListener longClickAction;
 
-        public AssembleItem(T item, View.OnClickListener clickAction) {
-            this.item = item;
-            this.clickAction = clickAction;
-        }
-
-        public AssembleItem(T item, View.OnClickListener clickAction, View.OnLongClickListener longClickAction) {
-            this.item = item;
-            this.clickAction = clickAction;
-            this.longClickAction = longClickAction;
-        }
     }
 
     public static class StaticLoaderItem {
@@ -83,8 +59,6 @@ public class GetPackageInfoViewTask extends Thread {
         public final ArrayList<IntentFilterItem> intentFilterItems = new ArrayList<>();
 
         public static class IntentFilterItem {
-            public String actionName;
-            public View.OnClickListener clickAction;
             public View intentFilterView;
         }
     }
@@ -135,13 +109,6 @@ public class GetPackageInfoViewTask extends Thread {
             cache_static_receivers.put(packageInfo.applicationInfo.sourceDir, static_receiver_bundle);
         }
 
-        final ArrayList<AssembleItem<AssembleItem.StringComponent>> permissionData = new ArrayList<>();
-        final ArrayList<AssembleItem<ActivityInfo>> activityData = new ArrayList<>();
-        final ArrayList<AssembleItem<ActivityInfo>> receiverData = new ArrayList<>();
-        final ArrayList<AssembleItem<ServiceInfo>> serviceData = new ArrayList<>();
-        final ArrayList<AssembleItem<ProviderInfo>> providerData = new ArrayList<>();
-        final ArrayList<StaticLoaderItem> staticLoaderItems = new ArrayList<>();
-
 
         final ArrayList<View> permission_child_views = new ArrayList<>();
         final ArrayList<View> activity_child_views = new ArrayList<>();
@@ -152,191 +119,67 @@ public class GetPackageInfoViewTask extends Thread {
 
         if (permissions != null && get_permissions) {
             for (final String s : permissions) {
-                if (s == null) continue;
-                /*permissionData.add(new AssembleItem<>(new AssembleItem.StringComponent(s), new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clip2ClipboardAndShowSnackbar(s);
-                    }
-                }));*/
-
-                permission_child_views.add(getSingleItemView(assemblyView.getLinearLayout_permission(), s, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clip2ClipboardAndShowSnackbar(s);
-                    }
-                }, null));
+                if (s == null) {
+                    continue;
+                }
+                permission_child_views.add(getSingleItemView(assemblyView.getLinearLayout_permission(), s));
             }
         }
         if (activities != null && get_activities) {
             for (final ActivityInfo info : activities) {
-                if (info == null) continue;
-                /*activityData.add(new AssembleItem<>(info, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clip2ClipboardAndShowSnackbar(info.name);
-                    }
-                }, new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        try {
-                            Intent intent = new Intent();
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.setClassName(info.packageName, info.name);
-                            activity.startActivity(intent);
-                        } catch (Exception e) {
-                            ToastManager.showToast(activity, e.toString(), Toast.LENGTH_SHORT);
-                        }
-                        return true;
-                    }
-                }));*/
-                activity_child_views.add(getSingleItemView(assemblyView.getLinearLayout_activity(), info.name, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clip2ClipboardAndShowSnackbar(info.name);
-                    }
-                }, new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        try {
-                            Intent intent = new Intent();
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.setClassName(info.packageName, info.name);
-                            activity.startActivity(intent);
-                        } catch (Exception e) {
-                            ToastManager.showToast(activity, e.toString(), Toast.LENGTH_SHORT);
-                        }
-                        return true;
-                    }
-                }));
+                if (info == null) {
+                    continue;
+                }
+                activity_child_views.add(getSingleItemView(assemblyView.getLinearLayout_activity(), info.name));
             }
         }
         if (receivers != null && get_receivers) {
             for (final ActivityInfo activityInfo : receivers) {
-                if (activityInfo == null) continue;
-                /*receiverData.add(new AssembleItem<>(activityInfo, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clip2ClipboardAndShowSnackbar(activityInfo.name);
-                    }
-                }));*/
-                receiver_child_views.add(getSingleItemView(assemblyView.getLinearLayout_receiver(), activityInfo.name, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clip2ClipboardAndShowSnackbar(activityInfo.name);
-                    }
-                }, null));
+                if (activityInfo == null) {
+                    continue;
+                }
+                receiver_child_views.add(getSingleItemView(assemblyView.getLinearLayout_receiver(), activityInfo.name));
             }
         }
 
         if (services != null && get_services) {
             for (final ServiceInfo serviceInfo : services) {
-                if (serviceInfo == null) continue;
-                /*serviceData.add(new AssembleItem<>(serviceInfo, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clip2ClipboardAndShowSnackbar(serviceInfo.name);
-                    }
-                }, new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        try {
-                            Intent intent = new Intent();
-                            intent.setClassName(serviceInfo.packageName, serviceInfo.name);
-                            activity.startService(intent);
-                        } catch (Exception e) {
-                            ToastManager.showToast(activity, e.toString(), Toast.LENGTH_SHORT);
-                        }
-                        return true;
-                    }
-                }));*/
-                service_child_views.add(getSingleItemView(assemblyView.getLinearLayout_service(), serviceInfo.name, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clip2ClipboardAndShowSnackbar(serviceInfo.name);
-                    }
-                }, new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        try {
-                            Intent intent = new Intent();
-                            intent.setClassName(serviceInfo.packageName, serviceInfo.name);
-                            activity.startService(intent);
-                        } catch (Exception e) {
-                            ToastManager.showToast(activity, e.toString(), Toast.LENGTH_SHORT);
-                        }
-                        return true;
-                    }
-                }));
+                if (serviceInfo == null) {
+                    continue;
+                }
+                service_child_views.add(getSingleItemView(assemblyView.getLinearLayout_service(), serviceInfo.name));
             }
         }
 
         if (providers != null && get_providers) {
             for (final ProviderInfo providerInfo : providers) {
-                if (providerInfo == null) continue;
-                /*providerData.add(new AssembleItem<>(providerInfo, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clip2ClipboardAndShowSnackbar(providerInfo.name);
-                    }
-                }));*/
-                provider_child_views.add(getSingleItemView(assemblyView.getLinearLayout_provider(), providerInfo.name, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clip2ClipboardAndShowSnackbar(providerInfo.name);
-                    }
-                }, null));
+                if (providerInfo == null) {
+                    continue;
+                }
+                provider_child_views.add(getSingleItemView(assemblyView.getLinearLayout_provider(), providerInfo.name));
             }
         }
 
         final Set<String> keys = static_receiver_bundle.keySet();
         if (get_static_loaders) {
             for (final String s : keys) {
-                /*StaticLoaderItem staticLoaderItem = new StaticLoaderItem();
-                staticLoaderItem.name = s;
-                staticLoaderItem.clickAction = new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clip2ClipboardAndShowSnackbar(s);
-                    }
-                };*/
-                //////////////
+
                 View static_loader_item_view = LayoutInflater.from(activity).inflate(R.layout.item_static_loader, assemblyView.getLinearLayout_loader(), false);
                 ((TextView) static_loader_item_view.findViewById(R.id.static_loader_name)).setText(s);
-                static_loader_item_view.findViewById(R.id.static_loader_name).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        clip2ClipboardAndShowSnackbar(s);
-                    }
-                });
+
                 ViewGroup filter_views = static_loader_item_view.findViewById(R.id.static_loader_intents);
-                ////////////
                 List<String> filters = static_receiver_bundle.getStringArrayList(s);
                 if (filters == null) continue;
                 for (final String filter : filters) {
-                    if (filter == null) continue;
-                    /*StaticLoaderItem.IntentFilterItem intentFilterItem = new StaticLoaderItem.IntentFilterItem();
-                    intentFilterItem.actionName = filter;
-                    intentFilterItem.clickAction = new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            clip2ClipboardAndShowSnackbar(filter);
-                        }
-                    };*/
-                    ////////////////
+                    if (filter == null) {
+                        continue;
+                    }
+
                     View itemView = LayoutInflater.from(activity).inflate(R.layout.item_single_textview, null, false);
                     ((TextView) itemView.findViewById(R.id.item_textview)).setText(filter);
-                    itemView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            clip2ClipboardAndShowSnackbar(filter);
-                        }
-                    });
-//                    intentFilterItem.intentFilterView = itemView;
+
                     filter_views.addView(itemView);
-//                    staticLoaderItem.intentFilterItems.add(intentFilterItem);
                 }
-//                staticLoaderItems.add(staticLoaderItem);
                 loaders_child_views.add(static_loader_item_view);
             }
         }
@@ -344,61 +187,22 @@ public class GetPackageInfoViewTask extends Thread {
         Global.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                //使用填充所有view到viewGroup的方法
                 if (get_permissions) {
-                    /*for (View view : permission_child_views)
-                        assemblyView.getLinearLayout_permission().addView(view);
-                    TextView att_permission = assemblyView.getTv_permission();
-                    att_permission.setText(activity.getResources().getString(R.string.activity_detail_permissions)
-                            + "(" + permission_child_views.size() + activity.getResources().getString(R.string.unit_item) + ")");
-                    assemblyView.findViewById(R.id.detail_card_permissions).setVisibility(View.VISIBLE);*/
-//                    assemblyView.setPermissionInfo(permissionData);
                     assemblyView.setPermissionInfoToAllViews(permission_child_views);
                 }
                 if (get_activities) {
-                    /*for (View view : activity_child_views)
-                        assemblyView.getLinearLayout_activity().addView(view);
-                    TextView att_activity = assemblyView.getTv_activity();
-                    att_activity.setText(activity.getResources().getString(R.string.activity_detail_activities)
-                            + "(" + activity_child_views.size() + activity.getResources().getString(R.string.unit_item) + ")");
-                    assemblyView.findViewById(R.id.detail_card_activities).setVisibility(View.VISIBLE);*/
-//                    assemblyView.setActivityInfo(activityData);
                     assemblyView.setActivityInfoToAllViews(activity_child_views);
                 }
                 if (get_receivers) {
-                    /*for (View view : receiver_child_views)
-                        assemblyView.getLinearLayout_receiver().addView(view);
-                    TextView att_receiver = assemblyView.getTv_receiver();
-                    att_receiver.setText(activity.getResources().getString(R.string.activity_detail_receivers) + "(" + receiver_child_views.size() + activity.getResources().getString(R.string.unit_item) + ")");
-                    assemblyView.findViewById(R.id.detail_card_receivers).setVisibility(View.VISIBLE);*/
-//                    assemblyView.setReceiverInfo(receiverData);
                     assemblyView.setReceiverInfoToAllViews(receiver_child_views);
                 }
                 if (get_static_loaders) {
-                    /*for (View view : loaders_child_views)
-                        assemblyView.getLinearLayout_loader().addView(view);
-                    TextView att_static_loader = assemblyView.getTv_loader();
-                    att_static_loader.setText(activity.getResources().getString(R.string.activity_detail_static_loaders) + "(" + keys.size() + activity.getResources().getString(R.string.unit_item) + ")");
-                    assemblyView.findViewById(R.id.detail_card_static_loaders).setVisibility(View.VISIBLE);*/
-//                    assemblyView.setStaticReceiverInfo(staticLoaderItems);
                     assemblyView.setStaticReceiverToAllViews(loaders_child_views);
                 }
                 if (get_services) {
-                    /*for (View view : service_child_views)
-                        assemblyView.getLinearLayout_service().addView(view);
-                    TextView att_service = assemblyView.getTv_service();
-                    att_service.setText(activity.getResources().getString(R.string.activity_detail_services) + "(" + service_child_views.size() + activity.getResources().getString(R.string.unit_item) + ")");
-                    assemblyView.findViewById(R.id.detail_card_services).setVisibility(View.VISIBLE);*/
-//                    assemblyView.setServiceInfo(serviceData);
                     assemblyView.setServiceInfoToAllViews(service_child_views);
                 }
                 if (get_providers) {
-                    /*for (View view : provider_child_views)
-                        assemblyView.getLinearLayout_provider().addView(view);
-                    TextView att_providers = assemblyView.getTv_provider();
-                    att_providers.setText(activity.getResources().getString(R.string.activity_detail_providers) + "(" + provider_child_views.size() + activity.getResources().getString(R.string.unit_item) + ")");
-                    assemblyView.findViewById(R.id.detail_card_providers).setVisibility(View.VISIBLE);*/
-//                    assemblyView.setProviderInfo(providerData);
                     assemblyView.setProviderInfoToAllViews(provider_child_views);
                 }
                 callback.onViewsCreated();
@@ -411,28 +215,14 @@ public class GetPackageInfoViewTask extends Thread {
         cache_static_receivers.clear();
     }
 
-    public static void clearPackageInfoCacheOfPath(String path) {
-        CommonUtil.removeKeyFromMapIgnoreCase(cache_wrapped_package_info, path);
-        CommonUtil.removeKeyFromMapIgnoreCase(cache_static_receivers, path);
-    }
 
-    private View getSingleItemView(ViewGroup group, String text, View.OnClickListener clickListener, View.OnLongClickListener longClickListener) {
+    private View getSingleItemView(ViewGroup group, String text) {
         View view = LayoutInflater.from(activity).inflate(R.layout.item_single_textview, group, false);
         ((TextView) view.findViewById(R.id.item_textview)).setText(text);
-        view.setOnClickListener(clickListener);
-        view.setOnLongClickListener(longClickListener);
+
         return view;
     }
 
-    private void clip2ClipboardAndShowSnackbar(String s) {
-        try {
-            ClipboardManager manager = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-            manager.setPrimaryClip(ClipData.newPlainText("message", s));
-            Snackbar.make(activity.findViewById(android.R.id.content), activity.getResources().getString(R.string.snack_bar_clipboard), Snackbar.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     public interface CompletedCallback {
         void onViewsCreated();

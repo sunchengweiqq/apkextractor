@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.ghmxr.apkextractor.DisplayItem;
 import com.github.ghmxr.apkextractor.R;
+import com.github.ghmxr.apkextractor.fragments.AppFragment;
+import com.github.ghmxr.apkextractor.items.AppItem;
 import com.github.ghmxr.apkextractor.utils.EnvironmentUtil;
 
 import java.util.ArrayList;
@@ -28,14 +30,14 @@ public class RecyclerViewAdapter<T extends DisplayItem<T>> extends RecyclerView.
 
     private final Activity activity;
     private final RecyclerView recyclerView;
-    private final ArrayList<T> data = new ArrayList<>();
-    private final ListAdapterOperationListener<T> listener;
-    private final HashSet<T> selectedItems = new HashSet<>();
+    private final ArrayList<AppItem> data = new ArrayList<>();
+    private final ListAdapterOperationListener<AppItem> listener;
+    private final HashSet<AppItem> selectedItems = new HashSet<>();
     private int mode;
     private String highlightKeyword = null;
 
-    public RecyclerViewAdapter(@NonNull Activity activity, @NonNull RecyclerView recyclerView, @Nullable List<T> data, int viewMode,
-                               @NonNull ListAdapterOperationListener<T> listener) {
+    public RecyclerViewAdapter(@NonNull Activity activity, @NonNull RecyclerView recyclerView, @Nullable List<AppItem> data, int viewMode,
+                               @NonNull AppFragment listener) {
         this.activity = activity;
         this.recyclerView = recyclerView;
         if (data != null) this.data.addAll(data);
@@ -53,7 +55,7 @@ public class RecyclerViewAdapter<T extends DisplayItem<T>> extends RecyclerView.
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int i) {
-        final T item = data.get(viewHolder.getAdapterPosition());
+        final AppItem item = data.get(viewHolder.getAdapterPosition());
         viewHolder.title.setTextColor(activity.getResources().getColor((item.isRedMarked() ?
                 R.color.colorSystemAppTitleColor : R.color.colorHighLightText)));
         try {
@@ -99,12 +101,12 @@ public class RecyclerViewAdapter<T extends DisplayItem<T>> extends RecyclerView.
         return mode;
     }
 
-    public void setData(@Nullable List<T> data) {
+    public void setData(@Nullable List<AppItem> data) {
         setData(data, false);
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    public void setData(@Nullable List<T> data, boolean clear) {
+    public void setData(@Nullable List<AppItem> data, boolean clear) {
         this.data.clear();
         if (clear) {
 
@@ -162,7 +164,7 @@ public class RecyclerViewAdapter<T extends DisplayItem<T>> extends RecyclerView.
     }
 
     public interface ListAdapterOperationListener<T> {
-        void onItemClicked(T item, ViewHolder viewHolder, int position);
+        void onItemClicked(AppItem item, ViewHolder viewHolder, int position);
 
     }
 }

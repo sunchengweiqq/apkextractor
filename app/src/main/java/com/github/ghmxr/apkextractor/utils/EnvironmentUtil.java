@@ -1,15 +1,12 @@
 package com.github.ghmxr.apkextractor.utils;
 
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -21,7 +18,6 @@ import android.view.inputmethod.InputMethodManager;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
 
 import com.github.ghmxr.apkextractor.Constants;
 import com.github.ghmxr.apkextractor.MyApplication;
@@ -29,13 +25,11 @@ import com.github.ghmxr.apkextractor.R;
 import com.github.ghmxr.apkextractor.tasks.GetApkLibraryTask;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.jar.JarEntry;
@@ -68,34 +62,10 @@ public class EnvironmentUtil {
             final PackageManager packageManager = context.getPackageManager();
             return String.valueOf(packageManager.getApplicationLabel(packageManager.getApplicationInfo(package_name, 0)));
         } catch (PackageManager.NameNotFoundException ne) {
-            //Do nothing
         } catch (Exception e) {
             e.printStackTrace();
         }
         return "";
-    }
-
-    /**
-     * 返回当前时间值
-     *
-     * @param field 参考{@link Calendar#YEAR} {@link Calendar#MONTH} {@link Calendar#MINUTE}
-     *              {@link Calendar#HOUR_OF_DAY} {@link Calendar#MINUTE} {@link Calendar#SECOND}
-     */
-    public static @NonNull
-    String getCurrentTimeValue(int field) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        int value = calendar.get(field);
-        if (field == Calendar.MONTH) value++;
-        return getFormatNumberWithZero(value);
-    }
-
-    private static @NonNull
-    String getFormatNumberWithZero(int value) {
-        if (value >= 0 && value <= 9) {
-            return "0" + value;
-        }
-        return String.valueOf(value);
     }
 
 
@@ -105,8 +75,7 @@ public class EnvironmentUtil {
      * @return string[0]证书发行者, string[1]证书所有者, string[2]序列号
      * string[3]证书起始时间 string[4]证书结束时间
      */
-    public static @NonNull
-    String[] getAPKSignInfo(String filePath) {
+    public static String[] getAPKSignInfo(String filePath) {
         String subjectDN = "";
         String issuerDN = "";
         String serial = "";
@@ -143,38 +112,31 @@ public class EnvironmentUtil {
         return new String[]{subjectDN, issuerDN, serial, notBefore, notAfter};
     }
 
-    public static @NonNull
-    String hashMD5Value(@NonNull InputStream inputStream) {
+    public static String hashMD5Value(@NonNull InputStream inputStream) {
         return getHashValue(inputStream, "MD5");
     }
 
-    public static @NonNull
-    String hashSHA256Value(@NonNull InputStream inputStream) {
+    public static String hashSHA256Value(@NonNull InputStream inputStream) {
         return getHashValue(inputStream, "SHA256");
     }
 
-    public static @NonNull
-    String hashSHA1Value(@NonNull InputStream inputStream) {
+    public static String hashSHA1Value(@NonNull InputStream inputStream) {
         return getHashValue(inputStream, "SHA1");
     }
 
-    public static @NonNull
-    String getSignatureMD5StringOfPackageInfo(@NonNull PackageInfo info) {
+    public static String getSignatureMD5StringOfPackageInfo(@NonNull PackageInfo info) {
         return getSignatureStringOfPackageInfo(info, "MD5");
     }
 
-    public static @NonNull
-    String getSignatureSHA1OfPackageInfo(@NonNull PackageInfo info) {
+    public static String getSignatureSHA1OfPackageInfo(@NonNull PackageInfo info) {
         return getSignatureStringOfPackageInfo(info, "SHA1");
     }
 
-    public static @NonNull
-    String getSignatureSHA256OfPackageInfo(@NonNull PackageInfo info) {
+    public static String getSignatureSHA256OfPackageInfo(@NonNull PackageInfo info) {
         return getSignatureStringOfPackageInfo(info, "SHA256");
     }
 
-    private static @NonNull
-    String getSignatureStringOfPackageInfo(@NonNull PackageInfo packageInfo, @NonNull String type) {
+    private static String getSignatureStringOfPackageInfo(@NonNull PackageInfo packageInfo, @NonNull String type) {
         try {
             MessageDigest localMessageDigest = MessageDigest.getInstance(type);
             localMessageDigest.update(packageInfo.signatures[0].toByteArray());
@@ -185,8 +147,7 @@ public class EnvironmentUtil {
         return "";
     }
 
-    private static @NonNull
-    String getHashValue(@NonNull InputStream inputStream, @NonNull String type) {
+    private static String getHashValue(@NonNull InputStream inputStream, @NonNull String type) {
         try {
             MessageDigest messageDigest = MessageDigest.getInstance(type);
             int length;
@@ -202,8 +163,7 @@ public class EnvironmentUtil {
         return "";
     }
 
-    private static @NonNull
-    String getHexString(byte[] paramArrayOfByte) {
+    private static String getHexString(byte[] paramArrayOfByte) {
         if (paramArrayOfByte == null) {
             return "";
         }
@@ -220,19 +180,10 @@ public class EnvironmentUtil {
         }
     }
 
-    /**
-     * 获取指定包名的自启接收器以及IntentFilter的Action参数，此方法较为耗时(遍历操作)
-     *
-     * @param package_name 指定包名
-     * @return < Receiver的class名，IntentFilter的Actions >
-     * @deprecated 建议用获取Bundle实例的方法
-     */
-    public static @NonNull
-    HashMap<String, List<String>> getStaticRegisteredReceiversForPackageName(@NonNull Context context, @NonNull String package_name) {
+    public static HashMap<String, List<String>> getStaticRegisteredReceiversForPackageName(@NonNull Context context, @NonNull String package_name) {
         HashMap<String, List<String>> map = new HashMap<>();
         PackageManager packageManager = context.getPackageManager();
         String[] static_filters = context.getResources().getStringArray(R.array.static_receiver_filters);
-        // if(static_filters==null)return new HashMap<>();
         for (String s : static_filters) {
             List<ResolveInfo> list = packageManager.queryBroadcastReceivers(new Intent(s), 0);
             if (list == null) continue;
@@ -250,16 +201,11 @@ public class EnvironmentUtil {
 
             }
         }
-
         return map;
 
     }
 
-    /**
-     * 当SharedPreference中设置了加载启动项的值，则会查询启动Receiver，否则会直接返回一个空Bundle（查询为耗时操作，此方法会阻塞）
-     */
-    public static @NonNull
-    Bundle getStaticRegisteredReceiversOfBundleTypeForPackageName(@NonNull Context context, @NonNull String package_name) {
+    public static Bundle getStaticRegisteredReceiversOfBundleTypeForPackageName(@NonNull Context context, @NonNull String package_name) {
         Bundle bundle = new Bundle();
         if (!SPUtil.getGlobalSharedPreferences(context)
                 .getBoolean(Constants.PREFERENCE_LOAD_STATIC_LOADERS, Constants.PREFERENCE_LOAD_STATIC_LOADERS_DEFAULT)) {
@@ -291,34 +237,6 @@ public class EnvironmentUtil {
 
 
     /**
-     * 将字符串中包含的非法文件系统符号去掉
-     *
-     * @param content 要处理的内容
-     * @return 去掉了文件系统非法符号的内容
-     */
-    static @NonNull
-    String removeIllegalFileNameCharacters(@NonNull String content) {
-        content = content.replace("?", "");
-        content = content.replace("\\", "");
-        content = content.replace("/", "");
-        content = content.replace(":", "");
-        content = content.replace("*", "");
-        content = content.replace("\"", "");
-        content = content.replace("<", "");
-        content = content.replace(">", "");
-        content = content.replace("|", "");
-        return content;
-    }
-
-
-    /**
-     * 传入的file须为主存储下的文件，且对file有完整的读写权限
-     */
-    public static Uri getUriForFileByFileProvider(@NonNull Context context, @NonNull File file) {
-        return FileProvider.getUriForFile(context, context.getPackageName() + ".FileProvider", file);
-    }
-
-    /**
      * 通过keyword高亮content中的指定内容，支持汉字首字母、全拼匹配
      *
      * @param content 要匹配的内容
@@ -337,7 +255,6 @@ public class EnvironmentUtil {
         }
         keyword = keyword.toLowerCase();
         final ArrayList<String> singleCharFullSpell = new ArrayList<>();
-        //final ArrayList<String>singleCharFirstSpell=new ArrayList<>();
         final StringBuilder fullSpell = new StringBuilder();
         final StringBuilder singleSpell = new StringBuilder();
         final char[] chars_content = content.toCharArray();
@@ -346,7 +263,6 @@ public class EnvironmentUtil {
                 fullSpell.append(PinyinUtil.getFullSpell(String.valueOf(chars_content[i])).toLowerCase());
                 singleSpell.append(PinyinUtil.getFirstSpell(String.valueOf(chars_content[i])).toLowerCase());
                 singleCharFullSpell.add(PinyinUtil.getFullSpell(String.valueOf(chars_content[i])).toLowerCase());
-                //singleCharFirstSpell.add(PinyinUtil.getFirstSpell(String.valueOf(chars_content[i])).toLowerCase());
             } else {
                 fullSpell.append(String.valueOf(chars_content[i]).toLowerCase());
                 singleSpell.append(String.valueOf(chars_content[i]).toLowerCase());
@@ -454,16 +370,4 @@ public class EnvironmentUtil {
         final ApplicationInfo applicationInfo = context.getApplicationInfo();
         return applicationInfo != null ? applicationInfo.targetSdkVersion : 23;//此项目发布时targetSdkVersion是23
     }
-
-
-    public static void clip2Clipboard(String content) {
-        try {
-            ClipboardManager manager = (ClipboardManager) MyApplication.getApplication().getSystemService(Context.CLIPBOARD_SERVICE);
-            manager.setPrimaryClip(ClipData.newPlainText("message", content));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
 }

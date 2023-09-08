@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 import com.github.ghmxr.apkextractor.Global;
 import com.github.ghmxr.apkextractor.items.AppItem;
 import com.github.ghmxr.apkextractor.items.FileItem;
-import com.github.ghmxr.apkextractor.utils.CommonUtil;
 
 import java.util.Collection;
 import java.util.Enumeration;
@@ -104,10 +103,6 @@ public class GetApkLibraryTask extends Thread {
     FileItem apkFile;
     final GetApkLibraryCallback callback;
 
-    public GetApkLibraryTask(AppItem appItem, GetApkLibraryCallback callback) {
-        this.appItem = appItem;
-        this.callback = callback;
-    }
 
     public GetApkLibraryTask(FileItem apkFile, GetApkLibraryCallback callback) {
         this.apkFile = apkFile;
@@ -150,19 +145,11 @@ public class GetApkLibraryTask extends Thread {
         });
     }
 
-    public static void clearAppLibraryCache() {
-        caches_installed.clear();
-    }
-
     public static void clearOutsidePackageCache() {
         caches_installed.clear();
         caches_outside_package.clear();
     }
 
-    public static void clearOutsidePackageCacheOfPath(String path) {
-        CommonUtil.removeKeyFromMapIgnoreCase(caches_installed, path);
-        CommonUtil.removeKeyFromMapIgnoreCase(caches_outside_package, path);
-    }
 
     private LibraryInfo getLibraryInfo(FileItem file) throws Exception {
         LibraryInfo libraryInfo = new LibraryInfo();
