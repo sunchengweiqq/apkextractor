@@ -75,16 +75,7 @@ public class ImportFragment extends Fragment implements RefreshImportListTask.Re
         public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
             if (adapter == null) return;
-            boolean isMultiSelectMode = false;
-            if (!recyclerView.canScrollVertically(-1)) {
-                // onScrolledToTop();
-            } else if (!recyclerView.canScrollVertically(1)) {
-                // onScrolledToBottom();
-
-            } else if (dy < 0) {
-                // onScrolledUp();
-
-            } else if (dy > 0) {
+            if (dy > 0) {
                 // onScrolledDown();
                 isScrollable = true;
 
@@ -164,7 +155,6 @@ public class ImportFragment extends Fragment implements RefreshImportListTask.Re
         isRefreshing = true;
         if (getActivity() == null) return;
         isScrollable = false;
-//        if (adapter != null) adapter.setData(null);
         if (adapter == null) adapter = new RecyclerViewAdapter<>(getActivity()
                 , recyclerView
                 , null

@@ -7,7 +7,6 @@ import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,7 +21,6 @@ import com.github.ghmxr.apkextractor.R;
 import com.github.ghmxr.apkextractor.utils.EnvironmentUtil;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
@@ -76,16 +74,15 @@ public class RecyclerViewAdapter<T extends DisplayItem<T>> extends RecyclerView.
 
         } else if (viewHolder.getViewType() == 1) {
 
-                viewHolder.root.setBackgroundColor(activity.getResources().getColor(R.color.colorCardArea));
+            viewHolder.root.setBackgroundColor(activity.getResources().getColor(R.color.colorCardArea));
         }
 
         viewHolder.root.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                    if (listener != null)
-                        listener.onItemClicked(item, viewHolder, viewHolder.getAdapterPosition());
-
+                if (listener != null)
+                    listener.onItemClicked(item, viewHolder, viewHolder.getAdapterPosition());
 
             }
         });
@@ -137,9 +134,6 @@ public class RecyclerViewAdapter<T extends DisplayItem<T>> extends RecyclerView.
         this.highlightKeyword = keyword;
         notifyDataSetChanged();
     }
-
-
-
 
 
     @SuppressLint("NotifyDataSetChanged")

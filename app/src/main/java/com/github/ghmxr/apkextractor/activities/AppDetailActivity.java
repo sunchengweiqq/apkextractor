@@ -17,7 +17,6 @@ import android.text.format.Formatter;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +30,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.widget.NestedScrollView;
 
 import com.github.ghmxr.apkextractor.Constants;
-import com.github.ghmxr.apkextractor.Global;
 import com.github.ghmxr.apkextractor.R;
 import com.github.ghmxr.apkextractor.items.AppItem;
 import com.github.ghmxr.apkextractor.tasks.GetDataObbTask;
@@ -42,22 +40,16 @@ import com.github.ghmxr.apkextractor.ui.AssemblyView;
 import com.github.ghmxr.apkextractor.ui.LibraryView;
 import com.github.ghmxr.apkextractor.ui.SignatureView;
 import com.github.ghmxr.apkextractor.ui.ToastManager;
-import com.github.ghmxr.apkextractor.utils.DocumentFileUtil;
 import com.github.ghmxr.apkextractor.utils.EnvironmentUtil;
-import com.github.ghmxr.apkextractor.utils.OutputUtil;
 import com.github.ghmxr.apkextractor.utils.SPUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 public class AppDetailActivity extends BaseActivity implements View.OnClickListener {
     private AppItem appItem;
-    private CheckBox cb_data, cb_obb;
     private final BroadcastReceiver uninstall_receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -129,8 +121,6 @@ public class AppDetailActivity extends BaseActivity implements View.OnClickListe
             }
         });
 
-        cb_data = findViewById(R.id.app_detail_export_data);
-        cb_obb = findViewById(R.id.app_detail_export_obb);
 
         PackageInfo packageInfo = appItem.getPackageInfo();
 
@@ -251,48 +241,9 @@ public class AppDetailActivity extends BaseActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-        getDataObbSizeAndFillView();
+
     }
 
-    private void getDataObbSizeAndFillView() {
-        findViewById(R.id.app_detail_export_progress_bar).setVisibility(View.VISIBLE);
-        findViewById(R.id.app_detail_export_checkboxes).setVisibility(View.GONE);
-        new GetDataObbTask(appItem, new GetDataObbTask.DataObbSizeGetCallback() {
-            @Override
-            public void onDataObbSizeGet(List<AppItem> containsData, List<AppItem> containsObb, Map<AppItem, GetDataObbTask.DataObbSizeInfo> map, GetDataObbTask.DataObbSizeInfo dataObbSizeInfo) {
-                findViewById(R.id.app_detail_export_progress_bar).setVisibility(View.GONE);
-                cb_data.setText("Data:" + Formatter.formatFileSize(AppDetailActivity.this, dataObbSizeInfo.data));
-                cb_obb.setText("Obb:" + Formatter.formatFileSize(AppDetailActivity.this, dataObbSizeInfo.obb));
-                cb_data.setEnabled(dataObbSizeInfo.data > 0);
-                cb_obb.setEnabled(dataObbSizeInfo.obb > 0);
-                findViewById(R.id.app_detail_export_checkboxes).setVisibility(View.VISIBLE);
-                if (Build.VERSION.SDK_INT >= Global.USE_STANDALONE_DOCUMENT_FILE_PERMISSION) {
-                    if (!DocumentFileUtil.canRWDataDocumentFileOf(appItem.getPackageName())) {
-                        wrapGrantView(findViewById(R.id.app_detail_export_data_grant), cb_data, getResources().getString(R.string.word_attention), String.format(getResources().getString(R.string.activity_detail_grant_data_introduction), appItem.getPackageName()), new Runnable() {
-                            @Override
-                            public void run() {
-                                EnvironmentUtil.jump2DataPathOfPackageName(AppDetailActivity.this, 0, appItem.getPackageName());
-                            }
-                        });
-                    } else {
-                        cb_data.setVisibility(View.VISIBLE);
-                        findViewById(R.id.app_detail_export_data_grant).setVisibility(View.GONE);
-                    }
-                    if (!DocumentFileUtil.canRWObbDocumentFileOf(appItem.getPackageName())) {
-                        wrapGrantView(findViewById(R.id.app_detail_export_obb_grant), cb_obb, getResources().getString(R.string.word_attention), String.format(getResources().getString(R.string.activity_detail_grant_obb_introduction), appItem.getPackageName()), new Runnable() {
-                            @Override
-                            public void run() {
-                                EnvironmentUtil.jump2ObbPathOfPackageName(AppDetailActivity.this, 0, appItem.getPackageName());
-                            }
-                        });
-                    } else {
-                        cb_obb.setVisibility(View.VISIBLE);
-                        findViewById(R.id.app_detail_export_obb_grant).setVisibility(View.GONE);
-                    }
-                }
-            }
-        }).start();
-    }
 
     @Override
     public void onClick(View v) {
@@ -308,45 +259,10 @@ public class AppDetailActivity extends BaseActivity implements View.OnClickListe
             }
             break;
             case R.id.app_detail_export_area: {
-                /*if (Build.VERSION.SDK_INT >= 23 && PermissionChecker.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PermissionChecker.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-                    Global.showRequestingWritePermissionSnackBar(this);
-                    return;
-                }*/
-                final List<AppItem> single_list = getSingleItemArrayList(true);
-                final AppItem item = single_list.get(0);
-                Global.checkAndExportCertainAppItemsToSetPathWithoutShare(this, single_list, false, new Global.ExportTaskFinishedListener() {
-                    @Override
-                    public void onFinished(@NonNull String error_message) {
-                        if (!error_message.trim().equals("")) {
-                            new AlertDialog.Builder(AppDetailActivity.this)
-                                    .setTitle(getResources().getString(R.string.exception_title))
-                                    .setMessage(getResources().getString(R.string.exception_message) + error_message)
-                                    .setPositiveButton(getResources().getString(R.string.dialog_button_confirm), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                        }
-                                    })
-                                    .show();
-                            return;
-                        }
-                        ToastManager.showToast(AppDetailActivity.this, getResources().getString(R.string.toast_export_complete) + " "
-                                + SPUtil.getDisplayingExportPath(AppDetailActivity.this) + "/"
-                                + OutputUtil.getWriteFileNameForAppItem(AppDetailActivity.this, single_list.get(0), (item.exportData || item.exportObb) ?
-                                SPUtil.getCompressingExtensionName(AppDetailActivity.this) : "apk", 1), Toast.LENGTH_SHORT);
-                    }
-                });
+                ToastManager.showToast(AppDetailActivity.this,appItem.getPackageName(), Toast.LENGTH_SHORT);
             }
             break;
-            case R.id.app_detail_share_area: {
-                /*if (Build.VERSION.SDK_INT >= 23 && PermissionChecker.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PermissionChecker.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-                    Global.showRequestingWritePermissionSnackBar(this);
-                    return;
-                }*/
-                Global.shareCertainAppsByItems(this, getSingleItemArrayList(false));
-            }
-            break;
+
             case R.id.app_detail_detail_area: {
                 Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                 intent.setData(Uri.fromParts("package", appItem.getPackageName(), null));
@@ -457,13 +373,11 @@ public class AppDetailActivity extends BaseActivity implements View.OnClickListe
             if (data != null && data.getData() != null) {
                 if (data.getData().getPath().toLowerCase().endsWith(appItem.getPackageName())) {
                     takePersistPermission(data.getData());
-                    getDataObbSizeAndFillView();
                 } else {
                     showAttentionDialog(R.string.dialog_grant_attention_title, R.string.dialog_grant_warn, new Runnable() {
                         @Override
                         public void run() {
                             takePersistPermission(data.getData());
-                            getDataObbSizeAndFillView();
                         }
                     });
                 }
@@ -544,21 +458,6 @@ public class AppDetailActivity extends BaseActivity implements View.OnClickListe
                     }
                 })
                 .show();
-    }
-
-    /**
-     * 构造包含单个副本AppItem的ArrayList
-     */
-    private @NonNull
-    ArrayList<AppItem> getSingleItemArrayList(boolean put_checkbox_value) {
-        ArrayList<AppItem> list = new ArrayList<>();
-        AppItem item = new AppItem(appItem, false, false);
-        if (put_checkbox_value) {
-            item.exportData = cb_data.isChecked();
-            item.exportObb = cb_obb.isChecked();
-        }
-        list.add(item);
-        return list;
     }
 
 
