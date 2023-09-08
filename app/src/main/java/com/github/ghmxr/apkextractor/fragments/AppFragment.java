@@ -81,30 +81,21 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
             if (getActivity() == null) return;
             if (adapter == null) return;
             if (card_normal == null || card_multi_select == null) return;
-            boolean isMultiSelectMode = adapter.getIsMultiSelectMode();
+
             if (!recyclerView.canScrollVertically(-1)) {
                 // onScrolledToTop();
             } else if (!recyclerView.canScrollVertically(1)) {
                 // onScrolledToBottom();
-                if (isMultiSelectMode) {
-                    if (isScrollable && card_multi_select.getVisibility() != View.GONE)
-                        setViewVisibilityWithAnimation(card_multi_select, View.GONE);
-                } else if (isScrollable && card_normal.getVisibility() != View.GONE && !isSearchMode)
+                 if (isScrollable && card_normal.getVisibility() != View.GONE && !isSearchMode)
                     setViewVisibilityWithAnimation(card_normal, View.GONE);
             } else if (dy < 0) {
                 // onScrolledUp();
-                if (isMultiSelectMode) {
-                    if (isScrollable && card_multi_select.getVisibility() != View.VISIBLE)
-                        setViewVisibilityWithAnimation(card_multi_select, View.VISIBLE);
-                } else if (isScrollable && card_normal.getVisibility() != View.VISIBLE && !isSearchMode)
+                  if (isScrollable && card_normal.getVisibility() != View.VISIBLE && !isSearchMode)
                     setViewVisibilityWithAnimation(card_normal, View.VISIBLE);
             } else if (dy > 0) {
                 // onScrolledDown();
                 isScrollable = true;
-                if (isMultiSelectMode) {
-                    if (card_multi_select.getVisibility() != View.GONE)
-                        setViewVisibilityWithAnimation(card_multi_select, View.GONE);
-                } else if (card_normal.getVisibility() != View.GONE && !isSearchMode)
+                if (card_normal.getVisibility() != View.GONE && !isSearchMode)
                     setViewVisibilityWithAnimation(card_normal, View.GONE);
             }
         }
@@ -291,25 +282,6 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
         }
     }
 
-    @Override
-    public void onMultiSelectItemChanged(List<AppItem> selected_items, long length) {
-        if (getActivity() == null) return;
-        tv_multi_select_head.setText(selected_items.size() + getResources().getString(R.string.unit_item) + "/" + Formatter.formatFileSize(getActivity(), length));
-        btn_export.setEnabled(selected_items.size() > 0);
-        btn_share.setEnabled(selected_items.size() > 0);
-    }
-
-    @Override
-    public void onMultiSelectModeOpened() {
-        if (getActivity() == null) return;
-        card_normal.setVisibility(View.GONE);
-        setViewVisibilityWithAnimation(card_multi_select, View.VISIBLE);
-        //isCurrentPageMultiSelectMode=true;
-        swipeRefreshLayout.setEnabled(false);
-        //setBackButtonVisible(true);
-        EnvironmentUtil.hideInputMethod(getActivity());
-
-    }
 
     @Override
     public void onSearchTaskCompleted(@NonNull List<AppItem> appItems, @NonNull String keyword) {
@@ -321,36 +293,20 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
     }
 
 
-    public boolean isMultiSelectMode() {
-        return adapter != null && adapter.getIsMultiSelectMode();
-    }
 
-    public void closeMultiSelectMode() {
-        if (adapter == null) return;
-        adapter.setMultiSelectMode(false);
-        swipeRefreshLayout.setEnabled(true);
-        if (isSearchMode) {
-            card_normal.setVisibility(View.GONE);
-            setViewVisibilityWithAnimation(card_multi_select, View.GONE);
-        } else {
-            setViewVisibilityWithAnimation(card_normal, View.VISIBLE);
-            card_multi_select.setVisibility(View.GONE);
-        }
-
-    }
 
     public void setSearchMode(boolean b) {
         this.isSearchMode = b;
         if (b) {
             if (card_normal != null) card_normal.setVisibility(View.GONE);
         } else {
-            if (!isMultiSelectMode()) setViewVisibilityWithAnimation(card_normal, View.VISIBLE);
+             setViewVisibilityWithAnimation(card_normal, View.VISIBLE);
             if (adapter != null) adapter.setHighlightKeyword(null);
         }
 //        if (card_multi_select != null) card_multi_select.setVisibility(View.GONE);
         if (swipeRefreshLayout != null) {
             if (!b) {
-                if (adapter != null && !adapter.getIsMultiSelectMode()) {
+                if (adapter != null ) {
                     swipeRefreshLayout.setEnabled(true);
                 }
             } else {

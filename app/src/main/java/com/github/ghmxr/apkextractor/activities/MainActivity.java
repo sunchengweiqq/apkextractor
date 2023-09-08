@@ -288,21 +288,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             closeSearchMode();
             return;
         }
-        switch (currentSelection) {
-            default:
-                break;
-            case 0: {
-                if (appFragment.isMultiSelectMode()) {
-                    appFragment.closeMultiSelectMode();
-                    return;
-                }
-            }
-            break;
-            case 1: {
-
-            }
-            break;
-        }
         finish();
     }
 }

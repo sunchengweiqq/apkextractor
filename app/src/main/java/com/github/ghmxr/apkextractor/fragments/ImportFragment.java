@@ -75,7 +75,7 @@ public class ImportFragment extends Fragment implements RefreshImportListTask.Re
         public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
             if (adapter == null) return;
-            boolean isMultiSelectMode = adapter.getIsMultiSelectMode();
+            boolean isMultiSelectMode = false;
             if (!recyclerView.canScrollVertically(-1)) {
                 // onScrolledToTop();
             } else if (!recyclerView.canScrollVertically(1)) {
@@ -195,7 +195,7 @@ public class ImportFragment extends Fragment implements RefreshImportListTask.Re
         isRefreshing = false;
         if (getActivity() == null) return;
         swipeRefreshLayout.setRefreshing(false);
-        swipeRefreshLayout.setEnabled(!adapter.getIsMultiSelectMode());
+        swipeRefreshLayout.setEnabled(true);
         /*if (adapter == null) adapter = new RecyclerViewAdapter<>(getActivity()
                 , recyclerView
                 , list
@@ -226,16 +226,6 @@ public class ImportFragment extends Fragment implements RefreshImportListTask.Re
         }
     }
 
-    @Override
-    public void onMultiSelectItemChanged(List<ImportItem> selected_items, long length) {
-        if (getActivity() == null) return;
-
-    }
-
-    @Override
-    public void onMultiSelectModeOpened() {
-
-    }
 
 
     @Override
@@ -258,7 +248,7 @@ public class ImportFragment extends Fragment implements RefreshImportListTask.Re
                 swipeRefreshLayout.setEnabled(false);
                 viewGroup_progress.setVisibility(View.GONE);
             } else {
-                if (adapter != null && !adapter.getIsMultiSelectMode()) {
+                if (adapter != null ) {
                     swipeRefreshLayout.setEnabled(true);
                 }
                 if (isRefreshing) {
@@ -268,7 +258,7 @@ public class ImportFragment extends Fragment implements RefreshImportListTask.Re
             }
         }
         if (adapter == null) return;
-//        adapter.setMultiSelectMode(false);
+
         if (b) {
             adapter.setData(null);
         } else {

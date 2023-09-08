@@ -33,7 +33,6 @@ public class RecyclerViewAdapter<T extends DisplayItem<T>> extends RecyclerView.
     private final ArrayList<T> data = new ArrayList<>();
     private final ListAdapterOperationListener<T> listener;
     private final HashSet<T> selectedItems = new HashSet<>();
-    private boolean isMultiSelectMode = false;
     private int mode;
     private String highlightKeyword = null;
 
@@ -74,53 +73,23 @@ public class RecyclerViewAdapter<T extends DisplayItem<T>> extends RecyclerView.
                 viewHolder.description.setText(String.valueOf(item.getDescription()));
             }
             viewHolder.right.setText(Formatter.formatFileSize(activity, item.getSize()));
-            viewHolder.right.setVisibility(isMultiSelectMode ? View.GONE : View.VISIBLE);
-            viewHolder.cb.setVisibility(isMultiSelectMode ? View.VISIBLE : View.GONE);
-            if (isMultiSelectMode) {
-//                viewHolder.cb.setChecked(isSelected[viewHolder.getAdapterPosition()]);
-                viewHolder.cb.setChecked(selectedItems.contains(item));
-            }
+
         } else if (viewHolder.getViewType() == 1) {
-            if (isMultiSelectMode)
-                viewHolder.root.setBackgroundColor(activity.getResources().getColor(selectedItems.contains(item)
-                        ? R.color.colorSelectedBackground
-                        : R.color.colorCardArea));
-            else
+
                 viewHolder.root.setBackgroundColor(activity.getResources().getColor(R.color.colorCardArea));
         }
 
         viewHolder.root.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isMultiSelectMode) {
-//                    isSelected[viewHolder.getAdapterPosition()] = !isSelected[viewHolder.getAdapterPosition()];
-                    if (selectedItems.contains(item)) {
-                        selectedItems.remove(item);
-                    } else {
-                        selectedItems.add(item);
-                    }
 
-                    notifyItemChanged(viewHolder.getAdapterPosition());
-                } else {
                     if (listener != null)
                         listener.onItemClicked(item, viewHolder, viewHolder.getAdapterPosition());
-                }
+
 
             }
         });
-        viewHolder.root.setOnLongClickListener(isMultiSelectMode ? null : new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-//                isSelected = new boolean[data.size()];
-                selectedItems.clear();
-//                isSelected[viewHolder.getAdapterPosition()] = true;
-                selectedItems.add(item);
-                isMultiSelectMode = true;
-                notifyDataSetChanged();
 
-                return true;
-            }
-        });
     }
 
     @Override
@@ -147,12 +116,6 @@ public class RecyclerViewAdapter<T extends DisplayItem<T>> extends RecyclerView.
         notifyItemRemoved(Math.max(0, index));
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    public void removeItems(Collection<T> collection) {
-        if (collection == null) return;
-        this.data.removeAll(collection);
-        notifyDataSetChanged();
-    }
 
     public void setData(@Nullable List<T> data) {
         setData(data, false);
@@ -162,7 +125,7 @@ public class RecyclerViewAdapter<T extends DisplayItem<T>> extends RecyclerView.
     public void setData(@Nullable List<T> data, boolean clear) {
         this.data.clear();
         if (clear) {
-            isMultiSelectMode = false;
+
             selectedItems.clear();
         }
         if (data != null) this.data.addAll(data);
@@ -175,60 +138,9 @@ public class RecyclerViewAdapter<T extends DisplayItem<T>> extends RecyclerView.
         notifyDataSetChanged();
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    public void setMultiSelectMode(boolean b) {
-        this.isMultiSelectMode = b;
-        if (!b) {
-            selectedItems.clear();
-        }
-        notifyDataSetChanged();
-        if (listener != null) {
-            if (b) listener.onMultiSelectModeOpened();
-            //else listener.onMultiSelectModeClosed();
-        }
-    }
 
-    public boolean getIsMultiSelectMode() {
-        return isMultiSelectMode;
-    }
 
-    @SuppressLint("NotifyDataSetChanged")
-    public void setSelectAll(boolean b) {
-        if (!isMultiSelectMode) return;
-        if (b) {
-            selectedItems.addAll(data);
-        } else {
-            selectedItems.clear();
-        }
-        notifyDataSetChanged();
-        if (listener != null)
-            listener.onMultiSelectItemChanged(getSelectedItems(), getSelectedFileLength());
-    }
 
-    public void setToggleSelectAll() {
-        if (!isMultiSelectMode) return;
-        if (selectedItems.size() != data.size()) {
-            setSelectAll(true);
-            return;
-        }
-        setSelectAll(false);
-    }
-
-    /**
-     * 获取已选择的项目
-     */
-    public @NonNull
-    List<T> getSelectedItems() {
-        return new ArrayList<>(selectedItems);
-    }
-
-    private long getSelectedFileLength() {
-        long length = 0L;
-        for (T item : selectedItems) {
-            length += item.getSize();
-        }
-        return length;
-    }
 
     @SuppressLint("NotifyDataSetChanged")
     public void setLayoutManagerAndView(int mode) {
@@ -251,7 +163,6 @@ public class RecyclerViewAdapter<T extends DisplayItem<T>> extends RecyclerView.
         TextView title;
         TextView description;
         TextView right;
-        CheckBox cb;
         View root;
 
         ViewHolder(@NonNull View itemView, int viewType) {
@@ -263,7 +174,6 @@ public class RecyclerViewAdapter<T extends DisplayItem<T>> extends RecyclerView.
             if (viewType == 0) {
                 description = itemView.findViewById(R.id.item_app_description);
                 right = itemView.findViewById(R.id.item_app_right);
-                cb = itemView.findViewById(R.id.item_app_cb);
             }
         }
 
@@ -275,8 +185,5 @@ public class RecyclerViewAdapter<T extends DisplayItem<T>> extends RecyclerView.
     public interface ListAdapterOperationListener<T> {
         void onItemClicked(T item, ViewHolder viewHolder, int position);
 
-        void onMultiSelectItemChanged(List<T> selected_items, long length);
-
-        void onMultiSelectModeOpened();
     }
 }
