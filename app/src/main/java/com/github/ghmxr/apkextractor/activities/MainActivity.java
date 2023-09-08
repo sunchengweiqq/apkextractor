@@ -299,10 +299,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             }
             break;
             case 1: {
-                if (importFragment.isMultiSelectMode()) {
-                    importFragment.closeMultiSelectMode();
-                    return;
-                }
+
             }
             break;
         }

@@ -52,7 +52,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-public class ImportFragment extends Fragment implements RefreshImportListTask.RefreshImportListTaskCallback, RecyclerViewAdapter.ListAdapterOperationListener<ImportItem>
+public class ImportFragment extends Fragment implements RefreshImportListTask.RefreshImportListTaskCallback,
+        RecyclerViewAdapter.ListAdapterOperationListener<ImportItem>
         , SearchPackageTask.SearchTaskCompletedCallback, View.OnClickListener {
 
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -62,10 +63,7 @@ public class ImportFragment extends Fragment implements RefreshImportListTask.Re
     private ViewGroup viewGroup_progress;
     private ProgressBar progressBar;
     private TextView progressTextView;
-    private CardView card_multi_select;
-    private TextView tv_multi_select_head;
-    private Button btn_import, btn_delete, btn_more, btn_select;
-    private PopupWindow popupWindow;
+
     private boolean isScrollable = false;
     private boolean isSearchMode = false;
 
@@ -82,24 +80,14 @@ public class ImportFragment extends Fragment implements RefreshImportListTask.Re
                 // onScrolledToTop();
             } else if (!recyclerView.canScrollVertically(1)) {
                 // onScrolledToBottom();
-                if (isMultiSelectMode) {
-                    if (isScrollable && card_multi_select.getVisibility() != View.GONE)
-                        setViewVisibilityWithAnimation(card_multi_select, View.GONE);
-                }
+
             } else if (dy < 0) {
                 // onScrolledUp();
-                if (isMultiSelectMode) {
-                    if (isScrollable && card_multi_select.getVisibility() != View.VISIBLE) {
-                        setViewVisibilityWithAnimation(card_multi_select, View.VISIBLE);
-                    }
-                }
+
             } else if (dy > 0) {
                 // onScrolledDown();
                 isScrollable = true;
-                if (isMultiSelectMode) {
-                    if (card_multi_select.getVisibility() != View.GONE)
-                        setViewVisibilityWithAnimation(card_multi_select, View.GONE);
-                }
+
             }
         }
     };
@@ -140,19 +128,7 @@ public class ImportFragment extends Fragment implements RefreshImportListTask.Re
         viewGroup_progress = view.findViewById(R.id.bottomBar);
         progressBar = view.findViewById(R.id.loading_pg);
         progressTextView = view.findViewById(R.id.bottomBarText);
-        card_multi_select = view.findViewById(R.id.import_card_multi_select);
-        tv_multi_select_head = view.findViewById(R.id.import_card_att);
-        btn_select = view.findViewById(R.id.import_select_all);
-        btn_delete = view.findViewById(R.id.import_delete);
-        btn_import = view.findViewById(R.id.import_action);
-        btn_more = view.findViewById(R.id.import_more);
-        View popupView = LayoutInflater.from(getActivity()).inflate(R.layout.pp_more_import, null);
-        popupView.findViewById(R.id.popup_file_rename).setOnClickListener(this);
-        popupView.findViewById(R.id.popup_share).setOnClickListener(this);
-        popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
-        popupWindow.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.color_popup_window)));
-        popupWindow.setTouchable(true);
-        popupWindow.setOutsideTouchable(true);
+
 
         try {
             IntentFilter intentFilter = new IntentFilter();
@@ -178,156 +154,7 @@ public class ImportFragment extends Fragment implements RefreshImportListTask.Re
 
     @Override
     public void onClick(View v) {
-        if (getActivity() == null) return;
-        switch (v.getId()) {
-            default:
-                break;
-            case R.id.import_select_all: {
-                if (adapter != null) adapter.setToggleSelectAll();
-            }
-            break;
-            case R.id.import_action: {
-                /*if (Build.VERSION.SDK_INT >= 23 && PermissionChecker.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PermissionChecker.PERMISSION_GRANTED) {
-                    Global.showRequestingWritePermissionSnackBar(getActivity());
-                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-                    return;
-                }*/
-                if (adapter == null) return;
-                ArrayList<ImportItem> arrayList = new ArrayList<>(adapter.getSelectedItems());
-                for (ImportItem importItem : arrayList) {
-                    if (importItem.getImportType() == ImportItem.ImportType.APK) {
-                        new AlertDialog.Builder(getActivity())
-                                .setTitle(getResources().getString(R.string.dialog_import_contains_apk_title))
-                                .setMessage(getResources().getString(R.string.dialog_import_contains_apk_message))
-                                .setPositiveButton(getResources().getString(R.string.dialog_button_confirm), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                    }
-                                })
-                                .show();
-                        return;
-                    }
-                }
-                Global.showImportingDataObbDialog(getActivity(), arrayList, new Global.ImportTaskFinishedCallback() {
-                    @Override
-                    public void onImportFinished(String error_message) {
-                        if (getActivity() == null) return;
-                        if (!error_message.trim().equals("")) {
-                            new AlertDialog.Builder(getActivity())
-                                    .setTitle(getResources().getString(R.string.dialog_import_finished_error_title))
-                                    .setMessage(getResources().getString(R.string.dialog_import_finished_error_message) + error_message)
-                                    .setPositiveButton(getResources().getString(R.string.dialog_button_confirm), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                        }
-                                    })
-                                    .show();
-                        } else {
-                            ToastManager.showToast(getActivity(), getResources().getString(R.string.toast_import_complete), Toast.LENGTH_SHORT);
-                        }
-                        closeMultiSelectMode();
-                    }
-                });
-            }
-            break;
-            case R.id.import_delete: {
-                new AlertDialog.Builder(getActivity())
-                        .setTitle(getResources().getString(R.string.dialog_import_delete_title))
-                        .setMessage(getResources().getString(R.string.dialog_import_delete_message))
-                        .setPositiveButton(getResources().getString(R.string.dialog_button_confirm), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (getActivity() == null) return;
-                                /*if (Build.VERSION.SDK_INT >= 23 && PermissionChecker.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PermissionChecker.PERMISSION_GRANTED) {
-                                    Global.showRequestingWritePermissionSnackBar(getActivity());
-                                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-                                    return;
-                                }*/
-                                try {
-                                    List<ImportItem> importItems = adapter.getSelectedItems();
-                                    HashSet<ImportItem> deleted = new HashSet<>();
-                                    for (ImportItem importItem : importItems) {
-                                        FileItem fileItem = importItem.getFileItem();
-                                        try {
-                                            if (fileItem.delete()) deleted.add(importItem);
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                    closeMultiSelectMode();
-//                                    getActivity().sendBroadcast(new Intent(Constants.ACTION_REFRESH_IMPORT_ITEMS_LIST));
-                                    if (adapter != null) {
-                                        adapter.removeItems(deleted);
-                                        if (viewGroup_no_content != null) {
-                                            viewGroup_no_content.setVisibility(adapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
-                                        }
-                                    }
 
-                                    Global.item_list.removeAll(deleted);
-
-                                    getActivity().sendBroadcast(new Intent(Constants.ACTION_REFRESH_AVAILIBLE_STORAGE));
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    ToastManager.showToast(getActivity(), e.toString(), Toast.LENGTH_SHORT);
-                                }
-                            }
-                        })
-                        .setNegativeButton(getResources().getString(R.string.dialog_button_cancel), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        })
-                        .show();
-            }
-            break;
-            case R.id.import_more: {
-                int[] values = EnvironmentUtil.calculatePopWindowPos(btn_more, popupWindow.getContentView());
-                popupWindow.showAtLocation(v, 0, values[0], values[1]);
-            }
-            break;
-            case R.id.popup_share: {
-                /*if (Build.VERSION.SDK_INT >= 23 && PermissionChecker.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PermissionChecker.PERMISSION_GRANTED) {
-                    Global.showRequestingWritePermissionSnackBar(getActivity());
-                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-                    return;
-                }*/
-                if (adapter == null) return;
-                if (adapter.getSelectedItems().size() == 0) return;
-                Global.shareImportItems(getActivity(), new ArrayList<>(adapter.getSelectedItems()));
-                popupWindow.dismiss();
-            }
-            break;
-            case R.id.popup_file_rename: {
-                if (adapter == null || adapter.getSelectedItems().size() == 0) return;
-                popupWindow.dismiss();
-                new FileRenamingDialog(getActivity(), adapter.getSelectedItems(), new FileRenamingDialog.CompletedCallback() {
-                    @SuppressLint("NotifyDataSetChanged")
-                    @Override
-                    public void onCompleted(@NonNull String errorInfo) {
-                        if (errorInfo.length() > 0) {
-                            if (getActivity() == null) return;
-                            new AlertDialog.Builder(getActivity())
-                                    .setTitle(getActivity().getResources().getString(R.string.word_error))
-                                    .setMessage(getActivity().getResources().getString(R.string.dialog_filename_failure) + errorInfo)
-                                    .setPositiveButton(getActivity().getResources().getString(R.string.action_confirm), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                        }
-                                    })
-                                    .show();
-//                            new RefreshImportListTask(ImportFragment.this).start();
-                        }
-                        if (isRefreshing && adapter != null) {
-                            adapter.notifyDataSetChanged();
-                        } else {
-                            sortGlobalListAndRefresh(ImportItem.sort_config);
-                        }
-                    }
-                }).show();
-            }
-            break;
-        }
     }
 
     private boolean isRefreshing = true;
@@ -348,13 +175,6 @@ public class ImportFragment extends Fragment implements RefreshImportListTask.Re
         swipeRefreshLayout.setRefreshing(true);
         viewGroup_no_content.setVisibility(View.GONE);
         viewGroup_progress.setVisibility(View.VISIBLE);
-        /*ViewGroup.LayoutParams layoutParams = viewGroup_progress.getLayoutParams();
-        layoutParams.height = EnvironmentUtil.dp2px(getActivity(), 160);
-        viewGroup_progress.setLayoutParams(layoutParams);
-        progressTextView.setText(getActivity().getResources().getString(R.string.att_scanning));
-        progressTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-        progressBar.setIndeterminate(true);*/
-        card_multi_select.setVisibility(View.GONE);
     }
 
     @SuppressLint("SetTextI18n")
@@ -409,30 +229,21 @@ public class ImportFragment extends Fragment implements RefreshImportListTask.Re
     @Override
     public void onMultiSelectItemChanged(List<ImportItem> selected_items, long length) {
         if (getActivity() == null) return;
-        tv_multi_select_head.setText(selected_items.size() + getResources().getString(R.string.unit_item) + "/" + Formatter.formatFileSize(getActivity(), length));
-        btn_import.setEnabled(selected_items.size() > 0);
-        btn_delete.setEnabled(selected_items.size() > 0);
+
     }
 
     @Override
     public void onMultiSelectModeOpened() {
-        if (getActivity() == null) return;
-        setViewVisibilityWithAnimation(card_multi_select, View.VISIBLE);
-        if (!swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setEnabled(false);
-        }
-        EnvironmentUtil.hideInputMethod(getActivity());
 
     }
+
 
     @Override
     public void onSearchTaskCompleted(@NonNull List<ImportItem> importItems, @NonNull String keyword) {
         if (getActivity() == null) return;
         if (adapter == null) return;
         swipeRefreshLayout.setRefreshing(false);
-        if (isMultiSelectMode()) {
-            swipeRefreshLayout.setEnabled(false);
-        }
+
         adapter.setData(importItems);
         adapter.setHighlightKeyword(keyword);
     }
@@ -506,16 +317,6 @@ public class ImportFragment extends Fragment implements RefreshImportListTask.Re
         return isSearchMode;
     }
 
-    public boolean isMultiSelectMode() {
-        return adapter != null && adapter.getIsMultiSelectMode();
-    }
-
-    public void closeMultiSelectMode() {
-        if (adapter == null) return;
-        adapter.setMultiSelectMode(false);
-        swipeRefreshLayout.setEnabled(true);
-        setViewVisibilityWithAnimation(card_multi_select, View.GONE);
-    }
 
 
     public void sortGlobalListAndRefresh(int value) {
@@ -550,10 +351,7 @@ public class ImportFragment extends Fragment implements RefreshImportListTask.Re
 
     private void initView() {
         if (getActivity() == null) return;
-        btn_select.setOnClickListener(this);
-        btn_more.setOnClickListener(this);
-        btn_delete.setOnClickListener(this);
-        btn_import.setOnClickListener(this);
+
         swipeRefreshLayout.setColorSchemeColors(getActivity().getResources().getColor(R.color.colorTitle));
         recyclerView.addOnScrollListener(onScrollListener);
         adapter = new RecyclerViewAdapter<>(getActivity()

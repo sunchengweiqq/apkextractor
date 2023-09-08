@@ -68,7 +68,6 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
     private CheckBox cb_sys;
     private TextView tv_space_remaining, tv_multi_select_head;
     private Button btn_select_all, btn_export, btn_share, btn_more;
-    private PopupWindow popupWindow;
     private boolean isScrollable = false;
     private boolean isSearchMode = false;
 
@@ -151,22 +150,10 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
         progressBar = view.findViewById(R.id.loading_pg);
         tv_progress = view.findViewById(R.id.loading_text);
         viewGroup_no_content = view.findViewById(R.id.no_content_att);
-        card_multi_select = view.findViewById(R.id.export_card_multi_select);
         card_normal = view.findViewById(R.id.export_card);
         cb_sys = view.findViewById(R.id.main_show_system_app);
         tv_space_remaining = view.findViewById(R.id.main_storage_remain);
-        tv_multi_select_head = view.findViewById(R.id.main_select_num_size);
-        btn_select_all = view.findViewById(R.id.main_select_all);
-        btn_export = view.findViewById(R.id.main_export);
-        btn_share = view.findViewById(R.id.main_share);
-        btn_more = view.findViewById(R.id.main_more);
-        View popupView = LayoutInflater.from(getActivity()).inflate(R.layout.pp_more, null);
-        ViewGroup more_copy_package_names = popupView.findViewById(R.id.popup_copy_package_name);
-        more_copy_package_names.setOnClickListener(this);
-        popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
-        popupWindow.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.color_popup_window)));
-        popupWindow.setTouchable(true);
-        popupWindow.setOutsideTouchable(true);
+
         try {
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(Constants.ACTION_REFRESH_APP_LIST);
@@ -196,10 +183,6 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
         cb_sys.setChecked(SPUtil.getGlobalSharedPreferences(getActivity()).getBoolean(Constants.PREFERENCE_SHOW_SYSTEM_APP, Constants.PREFERENCE_SHOW_SYSTEM_APP_DEFAULT));
         swipeRefreshLayout.setColorSchemeColors(getActivity().getResources().getColor(R.color.colorTitle));
 
-        btn_select_all.setOnClickListener(this);
-        btn_export.setOnClickListener(this);
-        btn_share.setOnClickListener(this);
-        btn_more.setOnClickListener(this);
 
         recyclerView.addOnScrollListener(onScrollListener);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -251,77 +234,7 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
         switch (v.getId()) {
             default:
                 break;
-            case R.id.main_select_all: {
-                if (adapter != null) adapter.setToggleSelectAll();
-            }
-            break;
-            case R.id.main_export: {
-                /*if (Build.VERSION.SDK_INT >= 23 && PermissionChecker.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PermissionChecker.PERMISSION_GRANTED) {
-                    Global.showRequestingWritePermissionSnackBar(getActivity());
-                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-                    return;
-                }*/
-                if (adapter == null) return;
-                final ArrayList<AppItem> arrayList = new ArrayList<>(adapter.getSelectedItems());
-                Global.checkAndExportCertainAppItemsToSetPathWithoutShare(getActivity(), arrayList, true, new Global.ExportTaskFinishedListener() {
-                    @Override
-                    public void onFinished(@NonNull String error_message) {
-                        if (getActivity() == null) return;
-                        if (!error_message.trim().equals("")) {
-                            new AlertDialog.Builder(getActivity())
-                                    .setTitle(getResources().getString(R.string.exception_title))
-                                    .setMessage(getResources().getString(R.string.exception_message) + error_message)
-                                    .setPositiveButton(getResources().getString(R.string.dialog_button_confirm), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                        }
-                                    })
-                                    .show();
-                        } else {
-                            ToastManager.showToast(getActivity(), getResources().getString(R.string.toast_export_complete) + " "
-                                    + SPUtil.getDisplayingExportPath(getActivity()), Toast.LENGTH_SHORT);
-                        }
-                        closeMultiSelectMode();
-                        refreshAvailableStorage();
-                    }
-                });
-            }
-            break;
-            case R.id.main_share: {
-                /*if (Build.VERSION.SDK_INT >= 23 && PermissionChecker.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PermissionChecker.PERMISSION_GRANTED) {
-                    Global.showRequestingWritePermissionSnackBar(getActivity());
-                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-                    return;
-                }*/
-                if (adapter == null) return;
-                final ArrayList<AppItem> arrayList = new ArrayList<>(adapter.getSelectedItems());
-                //closeMultiSelectMode();
-                Global.shareCertainAppsByItems(getActivity(), arrayList);
-            }
-            break;
-            case R.id.main_more: {
-                int[] values = EnvironmentUtil.calculatePopWindowPos(btn_more, popupWindow.getContentView());
-                popupWindow.showAtLocation(v, 0, values[0], values[1]);
-            }
-            break;
-            case R.id.popup_copy_package_name: {
-                List<AppItem> appItemList = adapter.getSelectedItems();
-                if (appItemList.size() == 0) {
-                    Snackbar.make(getActivity().findViewById(android.R.id.content), getResources().getString(R.string.snack_bar_no_app_selected), Snackbar.LENGTH_SHORT).show();
-                    return;
-                }
-                popupWindow.dismiss();
-                StringBuilder stringBuilder = new StringBuilder();
-                for (AppItem appItem : appItemList) {
-                    if (stringBuilder.toString().length() > 0)
-                        stringBuilder.append(SPUtil.getGlobalSharedPreferences(getActivity())
-                                .getString(Constants.PREFERENCE_COPYING_PACKAGE_NAME_SEPARATOR, Constants.PREFERENCE_COPYING_PACKAGE_NAME_SEPARATOR_DEFAULT));
-                    stringBuilder.append(appItem.getPackageName());
-                }
-                //closeMultiSelectMode();
-                clip2ClipboardAndShowSnackbar(stringBuilder.toString());
-            }
-            break;
+
         }
     }
 
@@ -336,7 +249,6 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
         progressBar.setProgress(0);
         swipeRefreshLayout.setRefreshing(true);
         cb_sys.setEnabled(false);
-        card_multi_select.setVisibility(View.GONE);
     }
 
     @Override
