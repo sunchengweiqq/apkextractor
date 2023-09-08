@@ -99,21 +99,6 @@ public class RecyclerViewAdapter<T extends DisplayItem<T>> extends RecyclerView.
         return mode;
     }
 
-    public void updateData(T data) {
-        if (this.data.contains(data)) {
-            return;
-        }
-        this.data.add(data);
-        notifyItemInserted(Math.max(0, this.data.indexOf(data)));
-    }
-
-    public void removeItem(T item) {
-        final int index = data.indexOf(item);
-        this.data.remove(item);
-        notifyItemRemoved(Math.max(0, index));
-    }
-
-
     public void setData(@Nullable List<T> data) {
         setData(data, false);
     }

@@ -32,7 +32,6 @@ import androidx.core.widget.NestedScrollView;
 import com.github.ghmxr.apkextractor.Constants;
 import com.github.ghmxr.apkextractor.R;
 import com.github.ghmxr.apkextractor.items.AppItem;
-import com.github.ghmxr.apkextractor.tasks.GetDataObbTask;
 import com.github.ghmxr.apkextractor.tasks.GetPackageInfoViewTask;
 import com.github.ghmxr.apkextractor.tasks.GetSignatureInfoTask;
 import com.github.ghmxr.apkextractor.tasks.HashTask;
@@ -143,8 +142,6 @@ public class AppDetailActivity extends BaseActivity implements View.OnClickListe
             }
         }
 
-//        getDataObbSizeAndFillView();
-
         new GetPackageInfoViewTask(this, appItem.getPackageInfo(), (AssemblyView) findViewById(R.id.app_detail_assembly), new GetPackageInfoViewTask.CompletedCallback() {
             @Override
             public void onViewsCreated() {
@@ -215,20 +212,8 @@ public class AppDetailActivity extends BaseActivity implements View.OnClickListe
             e.printStackTrace();
         }
 
-        EnvironmentUtil.checkAndShowGrantDialog(AppDetailActivity.this, appItem.getPackageName());
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable("appItem", appItem);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        appItem = savedInstanceState.getParcelable("appItem");
-    }
 
     @Override
     protected void onResume() {
@@ -390,7 +375,7 @@ public class AppDetailActivity extends BaseActivity implements View.OnClickListe
     private void takePersistPermission(Uri uri) {
         if (Build.VERSION.SDK_INT >= 19) {
             getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            GetDataObbTask.removeDataObbSizeCache(appItem.getPackageName());
+
         }
     }
 

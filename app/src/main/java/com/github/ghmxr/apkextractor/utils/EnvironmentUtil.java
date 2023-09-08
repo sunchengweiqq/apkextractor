@@ -6,7 +6,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -37,7 +36,6 @@ import android.widget.Toast;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import androidx.documentfile.provider.DocumentFile;
 
@@ -45,7 +43,6 @@ import com.github.ghmxr.apkextractor.Constants;
 import com.github.ghmxr.apkextractor.Global;
 import com.github.ghmxr.apkextractor.MyApplication;
 import com.github.ghmxr.apkextractor.R;
-import com.github.ghmxr.apkextractor.activities.GrantActivity;
 import com.github.ghmxr.apkextractor.tasks.GetApkLibraryTask;
 import com.github.ghmxr.apkextractor.ui.ToastManager;
 
@@ -740,51 +737,7 @@ public class EnvironmentUtil {
         return applicationInfo != null ? applicationInfo.targetSdkVersion : 23;//此项目发布时targetSdkVersion是23
     }
 
-    public static void checkAndShowGrantDialog(@NonNull final Activity activity, String packageName) {
-        if (Build.VERSION.SDK_INT < Global.USE_DOCUMENT_FILE_SDK_VERSION) return;
-        if (Build.VERSION.SDK_INT < Global.USE_STANDALONE_DOCUMENT_FILE_PERMISSION) {
-            if (hasDataObbPermission()) {
-                return;
-            }
-            if (!SPUtil.getGlobalSharedPreferences(activity).getBoolean(Constants.PREFERENCE_SHOW_GRANT_DIALOG, true)) {
-                return;
-            }
-            Global.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    showGrantDataObbPermissionDialog(activity);
-                }
-            });
-        } else {
-            if (packageName != null) {
-//                checkAndShowGrantDialogOfPackageName(activity, packageName);
-            }
-        }
-    }
 
-    public static boolean hasDataObbPermission() {
-        return DocumentFileUtil.canReadDataPathByDocumentFile() && DocumentFileUtil.canReadObbPathByDocumentFile()
-                && DocumentFileUtil.canWriteDataPathByDocumentFile() && DocumentFileUtil.canWriteObbPathByDocumentFile();
-    }
-
-    public static void showGrantDataObbPermissionDialog(final Activity activity) {
-        new AlertDialog.Builder(activity).setTitle(activity.getResources().getString(R.string.dialog_grant_attention_title))
-                .setMessage(activity.getResources().getString(R.string.dialog_grant_first_use))
-                .setPositiveButton(activity.getResources().getString(R.string.action_confirm), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        SPUtil.getGlobalSharedPreferences(activity).edit().putBoolean(Constants.PREFERENCE_SHOW_GRANT_DIALOG, false).apply();
-                        activity.startActivity(new Intent(activity, GrantActivity.class));
-                    }
-                })
-                .setNegativeButton(activity.getResources().getString(R.string.action_cancel), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        SPUtil.getGlobalSharedPreferences(activity).edit().putBoolean(Constants.PREFERENCE_SHOW_GRANT_DIALOG, false).apply();
-                    }
-                })
-                .show();
-    }
 
     public static void jump2DataPath(Activity activity, int requestCode) {
         jump2Path(activity, requestCode, Global.URI_DATA);

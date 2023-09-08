@@ -38,9 +38,6 @@
             android:label=""
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <activity
-            android:name=".activities.GrantActivity"
-            android:theme="@style/CommonTheme" />
 
         <provider
             android:authorities="${applicationId}.FileProvider"

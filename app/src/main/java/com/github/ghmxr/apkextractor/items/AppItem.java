@@ -87,7 +87,6 @@ public class AppItem implements DisplayItem<AppItem>, Parcelable {
         try {
             final String installer_package_name = packageManager.getInstallerPackageName(info.packageName);
             final String installer_name = EnvironmentUtil.getAppNameByPackageName(context, installer_package_name);
-            //install_source= TextUtils.isEmpty(installer_name)?installer_package_name:installer_name;
             if (!TextUtils.isEmpty(installer_name)) {
                 install_source = installer_name;
             } else {

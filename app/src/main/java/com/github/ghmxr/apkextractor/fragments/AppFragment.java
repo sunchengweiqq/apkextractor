@@ -265,7 +265,6 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
                 , this);
         recyclerView.setAdapter(adapter);
         cb_sys.setEnabled(true);
-        //if(isSearchMode)adapter.setData(null);
     }
 
     @Override
@@ -293,8 +292,6 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
     }
 
 
-
-
     public void setSearchMode(boolean b) {
         this.isSearchMode = b;
         if (b) {
@@ -303,7 +300,6 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
              setViewVisibilityWithAnimation(card_normal, View.VISIBLE);
             if (adapter != null) adapter.setHighlightKeyword(null);
         }
-//        if (card_multi_select != null) card_multi_select.setVisibility(View.GONE);
         if (swipeRefreshLayout != null) {
             if (!b) {
                 if (adapter != null ) {
@@ -315,7 +311,6 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
 
         }
         if (adapter == null) return;
-//        adapter.setMultiSelectMode(false);
         if (b) {
             adapter.setData(null);
         } else {
@@ -336,14 +331,11 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
         if (searchAppItemTask != null) searchAppItemTask.setInterrupted();
         searchAppItemTask = new SearchAppItemTask(Global.app_list, key, this);
         adapter.setData(null);
-//        adapter.setMultiSelectMode(false);
-//        card_multi_select.setVisibility(View.GONE);
         swipeRefreshLayout.setRefreshing(true);
         searchAppItemTask.start();
     }
 
     public void sortGlobalListAndRefresh(int value) {
-//        closeMultiSelectMode();
         AppItem.sort_config = value;
         if (adapter != null) adapter.setData(null);
         swipeRefreshLayout.setRefreshing(true);
@@ -426,14 +418,4 @@ public class AppFragment extends Fragment implements View.OnClickListener, Refre
         }
     }
 
-    private void clip2ClipboardAndShowSnackbar(String s) {
-        try {
-            if (getActivity() == null) return;
-            ClipboardManager manager = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-            manager.setPrimaryClip(ClipData.newPlainText("message", s));
-            Snackbar.make(getActivity().findViewById(android.R.id.content), getResources().getString(R.string.snack_bar_clipboard), Snackbar.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

@@ -131,15 +131,4 @@ public abstract class FileItem implements Comparable<FileItem> {
         return new StandardFileItem(file);
     }
 
-    public static FileItem createFileItemInstance(Uri treeUri, String segments) throws Exception {
-        return new DocumentFileItem(treeUri, segments);
-    }
-
-    public static FileItem createFileItemInstance(DocumentFile documentFile) {
-        return new DocumentFileItem(documentFile);
-    }
-
-    public static FileItem createFileItemInstance(Uri contentUri) {
-        return new ShareUriFileItem(contentUri);
-    }
 }
