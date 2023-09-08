@@ -142,7 +142,7 @@ public class AppDetailActivity extends BaseActivity implements View.OnClickListe
             }
         }
 
-        new GetPackageInfoViewTask(this, appItem.getPackageInfo(), (AssemblyView) findViewById(R.id.app_detail_assembly), new GetPackageInfoViewTask.CompletedCallback() {
+        new GetPackageInfoViewTask(this, appItem.getPackageInfo(), findViewById(R.id.app_detail_assembly), new GetPackageInfoViewTask.CompletedCallback() {
             @Override
             public void onViewsCreated() {
                 findViewById(R.id.app_detail_assembly).setVisibility(View.VISIBLE);
@@ -153,7 +153,7 @@ public class AppDetailActivity extends BaseActivity implements View.OnClickListe
         if (SPUtil.getGlobalSharedPreferences(this).getBoolean(Constants.PREFERENCE_LOAD_APK_SIGNATURE, Constants.PREFERENCE_LOAD_APK_SIGNATURE_DEFAULT)) {
             findViewById(R.id.app_detail_signature_att).setVisibility(View.VISIBLE);
             findViewById(R.id.app_detail_sign_pg).setVisibility(View.VISIBLE);
-            new GetSignatureInfoTask(this, appItem.getPackageInfo(), (SignatureView) findViewById(R.id.app_detail_signature), new GetSignatureInfoTask.CompletedCallback() {
+            new GetSignatureInfoTask(this, appItem.getPackageInfo(), findViewById(R.id.app_detail_signature), new GetSignatureInfoTask.CompletedCallback() {
                 @Override
                 public void onCompleted() {
                     findViewById(R.id.app_detail_sign_pg).setVisibility(View.GONE);

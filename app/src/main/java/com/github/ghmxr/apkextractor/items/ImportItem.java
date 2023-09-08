@@ -17,7 +17,6 @@ import com.github.ghmxr.apkextractor.R;
 import com.github.ghmxr.apkextractor.utils.EnvironmentUtil;
 import com.github.ghmxr.apkextractor.utils.PinyinUtil;
 import com.github.ghmxr.apkextractor.utils.SPUtil;
-import com.github.ghmxr.apkextractor.utils.ZipFileUtil;
 
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -43,12 +42,6 @@ public class ImportItem implements DisplayItem<ImportItem>, Comparable<ImportIte
     private String minSdkVersion = "";
     private String targetSdkVersion = "";
     private String apkLabel = "";
-    //    private final long lastModified;
-    private ZipFileUtil.ZipFileInfo zipFileInfo;
-
-    public transient boolean importData = false;
-    public transient boolean importObb = false;
-    public transient boolean importApk = false;
 
     public ImportItem(@NonNull FileItem fileItem) {
         this.fileItem = fileItem;
@@ -99,22 +92,8 @@ public class ImportItem implements DisplayItem<ImportItem>, Comparable<ImportIte
             }
 
         }
-//        length = fileItem.length();
-//        lastModified = fileItem.lastModified();
     }
 
-    public ImportItem(@NonNull ImportItem wrapper, boolean importData, boolean importObb, boolean importApk) {
-        this.drawable = wrapper.drawable;
-        this.version_name = wrapper.version_name;
-        this.fileItem = wrapper.fileItem;
-        this.importType = wrapper.importType;
-//        this.length = wrapper.length;
-//        this.lastModified = wrapper.lastModified;
-        this.zipFileInfo = wrapper.getZipFileInfo();
-        this.importData = importData;
-        this.importObb = importObb;
-        this.importApk = importApk;
-    }
 
     @Override
     public Drawable getIconDrawable() {
@@ -235,24 +214,8 @@ public class ImportItem implements DisplayItem<ImportItem>, Comparable<ImportIte
         return null;
     }
 
-    /**
-     * 如果此导入项为存储到内置存储的Uri.fromFile()
-     *
-     * @return uri
-     */
-    public @Nullable
-    Uri getUriFromFile() {
-        if (fileItem.isFileInstance()) return Uri.fromFile(fileItem.getFile());
-        return null;
-    }
 
-    public ZipFileUtil.ZipFileInfo getZipFileInfo() {
-        return zipFileInfo;
-    }
 
-    public void setZipFileInfo(ZipFileUtil.ZipFileInfo zipFileInfo) {
-        this.zipFileInfo = zipFileInfo;
-    }
 
     @Override
     public int compareTo(@NonNull ImportItem o) {

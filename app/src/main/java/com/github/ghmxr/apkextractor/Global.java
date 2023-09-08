@@ -1,22 +1,15 @@
 package com.github.ghmxr.apkextractor;
 
-import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.documentfile.provider.DocumentFile;
 
 import com.github.ghmxr.apkextractor.items.AppItem;
-import com.github.ghmxr.apkextractor.items.FileItem;
 import com.github.ghmxr.apkextractor.items.ImportItem;
-import com.github.ghmxr.apkextractor.utils.DocumentFileUtil;
-import com.github.ghmxr.apkextractor.utils.OutputUtil;
-import com.github.ghmxr.apkextractor.utils.SPUtil;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -34,11 +27,6 @@ public class Global {
      * 用于持有对读取出的list的引用
      */
     public static final List<AppItem> app_list = new Vector<>();
-
-    /**
-     * 导出目录下的文件list引用
-     */
-    public static final List<ImportItem> item_list = new ImportItemVector();
 
     private static class ImportItemVector extends Vector<ImportItem> {
 

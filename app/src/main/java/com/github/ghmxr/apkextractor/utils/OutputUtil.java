@@ -32,17 +32,6 @@ public class OutputUtil {
 
 
 
-    /**
-     * 获取导出根目录的documentFile
-     */
-    public static DocumentFile getExportPathDocumentFile(@NonNull Context context) throws Exception {
-        String segments = SPUtil.getSaveSegment(context);
-        DocumentFile documentFile = DocumentFile.fromTreeUri(context, Uri.parse(SPUtil.getExternalStorageUri(context)));
-        if (documentFile == null || !documentFile.canWrite()) {
-            throw new RuntimeException("Exporting path invalid or can not write to it, please check");
-        }
-        return DocumentFileUtil.getDocumentFileBySegments(documentFile, segments);
-    }
 
     /**
      * 为一个AppItem获取一个写入的文件名，例如example.apk

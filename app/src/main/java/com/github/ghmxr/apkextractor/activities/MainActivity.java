@@ -24,9 +24,6 @@ import com.github.ghmxr.apkextractor.Constants;
 import com.github.ghmxr.apkextractor.R;
 import com.github.ghmxr.apkextractor.adapters.MyPagerAdapter;
 import com.github.ghmxr.apkextractor.fragments.AppFragment;
-import com.github.ghmxr.apkextractor.ui.AppItemSortConfigDialog;
-import com.github.ghmxr.apkextractor.ui.ImportItemSortConfigDialog;
-import com.github.ghmxr.apkextractor.ui.SortConfigDialogCallback;
 import com.github.ghmxr.apkextractor.utils.EnvironmentUtil;
 import com.github.ghmxr.apkextractor.utils.SPUtil;
 import com.google.android.material.tabs.TabLayout;
@@ -183,17 +180,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             }
         }
 
-        if (id == R.id.action_sort) {
-            if (currentSelection == 0) {
-                AppItemSortConfigDialog appItemSortConfigDialog = new AppItemSortConfigDialog(this, new SortConfigDialogCallback() {
-                    @Override
-                    public void onOptionSelected(int value) {
-                        appFragment.sortGlobalListAndRefresh(value);
-                    }
-                });
-                appItemSortConfigDialog.show();
-            }
-        }
         return super.onOptionsItemSelected(item);
     }
 

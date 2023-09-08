@@ -33,7 +33,7 @@
                     android:transitionName="icon"
                     tools:src="@mipmap/ic_launcher" />
 
-                <com.github.ghmxr.apkextractor.ui.AutoMarqueeTextView
+                <TextView
                     android:id="@+id/app_detail_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

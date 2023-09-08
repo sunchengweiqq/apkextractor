@@ -81,16 +81,6 @@ public class EnvironmentUtil {
         }
     }
 
-    public static Bitmap drawableToBitmap(Drawable drawable) {
-        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-                drawable.getIntrinsicHeight(),
-                drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565);
-        Canvas canvas = new Canvas(bitmap);
-        //canvas.setBitmap(bitmap);
-        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-        drawable.draw(canvas);
-        return bitmap;
-    }
 
     public static @NonNull
     String getAppNameByPackageName(@NonNull Context context, @NonNull String package_name) {
@@ -128,20 +118,6 @@ public class EnvironmentUtil {
         return String.valueOf(value);
     }
 
-    public static String getEmptyVariableString(@NonNull String value) {
-        value = value.replace(Constants.FONT_APP_NAME, "");
-        value = value.replace(Constants.FONT_APP_PACKAGE_NAME, "");
-        value = value.replace(Constants.FONT_APP_VERSIONNAME, "");
-        value = value.replace(Constants.FONT_APP_VERSIONCODE, "");
-        value = value.replace(Constants.FONT_YEAR, "");
-        value = value.replace(Constants.FONT_MONTH, "");
-        value = value.replace(Constants.FONT_DAY_OF_MONTH, "");
-        value = value.replace(Constants.FONT_HOUR_OF_DAY, "");
-        value = value.replace(Constants.FONT_MINUTE, "");
-        value = value.replace(Constants.FONT_SECOND, "");
-        value = value.replace(Constants.FONT_AUTO_SEQUENCE_NUMBER, "");
-        return value;
-    }
 
     /**
      * 获取apk包签名基本信息
@@ -162,9 +138,9 @@ public class EnvironmentUtil {
             if (JarEntry != null) {
                 byte[] readBuffer = new byte[8192];
                 InputStream is = new BufferedInputStream(JarFile.getInputStream(JarEntry));
-                while (is.read(readBuffer, 0, readBuffer.length) != -1) {
-                    //notusing
-                }
+//                while (is.read(readBuffer, 0, readBuffer.length) != -1) {
+//                    //notusing
+//                }
                 Certificate[] certs = JarEntry.getCertificates();
                 if (certs != null && certs.length > 0) {
                     //获取证书
@@ -336,21 +312,6 @@ public class EnvironmentUtil {
         return bundle;
     }
 
-    /**
-     * 判断一个字符串是否为标准Linux/Windows的标准合法文件名（不包含非法字符）
-     *
-     * @param name 文件名称（仅文件名，不包含路径）
-     * @return true-合法文件名  false-包含非法字符
-     */
-    public static boolean isALegalFileName(@NonNull String name) {
-        try {
-            if (name.contains("?") || name.contains("\\") || name.contains("/") || name.contains(":") || name.contains("*") || name.contains("\"")
-                    || name.contains("<") || name.contains(">") || name.contains("|")) return false;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return true;
-    }
 
     /**
      * 将字符串中包含的非法文件系统符号去掉
@@ -372,229 +333,12 @@ public class EnvironmentUtil {
         return content;
     }
 
-    /**
-     * 截取文件扩展名，例如Test.apk 则返回 apk
-     */
-    public static @NonNull
-    String getFileExtensionName(@NonNull String fileName) {
-        try {
-            return fileName.substring(fileName.lastIndexOf(".") + 1);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
-
-    /**
-     * 返回文件主体的文件名，例如 Test.File.java 则返回Test.File
-     */
-    public static @NonNull
-    String getFileMainName(@NonNull String fileName) {
-        try {
-            final int lastIndex = fileName.lastIndexOf(".");
-            if (lastIndex == -1) return fileName;
-            return fileName.substring(0, lastIndex);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
-
-    /**
-     * 判断当前是否连接了WiFi网络
-     *
-     * @return true-连接了WiFi网络
-     */
-    public static boolean isWifiConnected(@NonNull Context context) {
-        try {
-            WifiInfo wifiInfo = ((WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE)).getConnectionInfo();
-            return wifiInfo != null && wifiInfo.getIpAddress() != 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    /**
-     * 获取系统热点是否开启
-     */
-    public static boolean isAPEnabled(Context context) {
-        try {
-            WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            Method method = wifiManager.getClass().getDeclaredMethod("getWifiApState");
-            Field field = wifiManager.getClass().getDeclaredField("WIFI_AP_STATE_ENABLED");
-            int value_wifi_enabled = (int) field.get(wifiManager);
-            return ((int) method.invoke(wifiManager)) == value_wifi_enabled;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    /**
-     * 跳转到系统热点配置页
-     */
-    public static void goToApPageActivity(@NonNull Context context) {
-        try {
-            Intent intent = new Intent();
-            ComponentName cm = new ComponentName("com.android.settings",
-                    "com.android.settings.TetherSettings");
-            intent.setComponent(cm);
-            intent.setAction("android.intent.action.VIEW");
-            context.startActivity(intent);
-        } catch (Exception e) {
-            e.printStackTrace();
-            ToastManager.showToast(context, e.toString(), Toast.LENGTH_SHORT);
-        }
-    }
-
-    public static String getRouterIpAddress(@NonNull Context context) {
-        try {
-            WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();
-            return Formatter.formatIpAddress(dhcpInfo.gateway);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "192.168.1.1";
-    }
-
-    /**
-     * 获取本机连接WiFi网络的IP地址
-     */
-    public static String getSelfIp(@NonNull Context context) {
-        try {
-            WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            return Formatter.formatIpAddress(wifiManager.getDhcpInfo().ipAddress);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "0.0.0.0";
-    }
-
-    /**
-     * 获取本应用名称
-     */
-    public static @NonNull
-    String getAppName(@NonNull Context context) {
-        return getAppNameByPackageName(context, context.getPackageName());
-    }
-
-    /**
-     * 获取本应用版本名
-     */
-    public static @NonNull
-    String getAppVersionName(@NonNull Context context) {
-        try {
-            PackageManager packageManager = context.getPackageManager();
-            return String.valueOf(packageManager.getPackageInfo(context.getPackageName(), 0).versionName);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
-
-    /**
-     * 通过contentUri获取文件名
-     */
-    public static @Nullable
-    String getFileNameFromContentUri(@NonNull Context context, @NonNull Uri contentUri) {
-        return queryResultByContentResolver(context, contentUri, MediaStore.Files.FileColumns.DISPLAY_NAME);
-    }
-
-    /**
-     * 通过contentUri获取文件路径
-     */
-    public static @Nullable
-    String getFilePathFromContentUri(@NonNull Context context, @NonNull Uri contentUri) {
-        return queryResultByContentResolver(context, contentUri, MediaStore.Files.FileColumns.DATA);
-    }
-
-    /**
-     * 通过contentUri获取文件大小，返回字符串型长度，单位字节
-     */
-    public static @Nullable
-    String getFileLengthFromContentUri(@NonNull Context context, @NonNull Uri contentUri) {
-        return queryResultByContentResolver(context, contentUri, MediaStore.Files.FileColumns.SIZE);
-    }
-
-    @SuppressLint("Range")
-    private static @Nullable
-    String queryResultByContentResolver(@NonNull Context context, @NonNull Uri contentUri, @NonNull String selection) {
-        try {
-            String result = null;
-            Cursor cursor = context.getContentResolver().query(contentUri,
-                    new String[]{selection},
-                    null, null, null);
-            if (cursor == null) return null;
-            else {
-                if (cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(selection));
-                }
-                cursor.close();
-            }
-            return result;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     /**
      * 传入的file须为主存储下的文件，且对file有完整的读写权限
      */
     public static Uri getUriForFileByFileProvider(@NonNull Context context, @NonNull File file) {
         return FileProvider.getUriForFile(context, context.getPackageName() + ".FileProvider", file);
-    }
-
-    /**
-     * 请求更新媒体数据库
-     */
-    public static void requestUpdatingMediaDatabase(@NonNull Context context) {
-        try {
-            Bundle bundle = new Bundle();
-            bundle.putString("volume", "external");
-            Intent intent = new Intent();
-            intent.putExtras(bundle);
-            intent.setComponent(new ComponentName("com.android.providers.media",
-                    "com.android.providers.media.MediaScannerService"));
-            context.startService(intent);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 计算出来的位置，y方向就在anchorView的上面和下面对齐显示，x方向就是与屏幕右边对齐显示
-     * 如果anchorView的位置有变化，就可以适当自己额外加入偏移来修正
-     *
-     * @param anchorView  呼出window的view
-     * @param contentView window的内容布局
-     * @return window显示的左上角的xOff, yOff坐标
-     */
-    public static int[] calculatePopWindowPos(final View anchorView, final View contentView) {
-        final int[] windowPos = new int[2];
-        final int[] anchorLoc = new int[2];
-        // 获取锚点View在屏幕上的左上角坐标位置
-        anchorView.getLocationOnScreen(anchorLoc);
-        final int anchorHeight = anchorView.getHeight();
-        // 获取屏幕的高宽
-        final int screenHeight = anchorView.getContext().getResources().getDisplayMetrics().heightPixels;//ScreenUtils.getScreenHeight(anchorView.getContext());
-        final int screenWidth = anchorView.getResources().getDisplayMetrics().widthPixels;
-        contentView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        // 计算contentView的高宽
-        final int windowHeight = contentView.getMeasuredHeight();
-        final int windowWidth = contentView.getMeasuredWidth();
-        // 判断需要向上弹出还是向下弹出显示
-        final boolean isNeedShowUp = (screenHeight - anchorLoc[1] - anchorHeight < windowHeight);
-        if (isNeedShowUp) {
-            windowPos[0] = anchorLoc[0];//screenWidth - windowWidth*3/2;
-            windowPos[1] = anchorLoc[1] - windowHeight;
-        } else {
-            windowPos[0] = anchorLoc[0];//screenWidth - windowWidth*3/2;
-            windowPos[1] = anchorLoc[1] + anchorHeight;
-        }
-        return windowPos;
     }
 
     /**
@@ -683,9 +427,6 @@ public class EnvironmentUtil {
         return builder;
     }
 
-    public static int dp2px(@NonNull Context context, int dp) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
-    }
 
     @Nullable
     public static GetApkLibraryTask.LibraryType getShowingLibraryType(@NonNull GetApkLibraryTask.LibraryInfo libraryInfo) {
@@ -738,35 +479,6 @@ public class EnvironmentUtil {
     }
 
 
-
-    public static void jump2DataPath(Activity activity, int requestCode) {
-        jump2Path(activity, requestCode, Global.URI_DATA);
-    }
-
-    public static void jump2ObbPath(Activity activity, int requestCode) {
-        jump2Path(activity, requestCode, Global.URI_OBB);
-    }
-
-    public static void jump2DataPathOfPackageName(Activity activity, int requestCode, String packageName) {
-        jump2Path(activity, requestCode, Global.URI_DATA + "%2F" + packageName);
-    }
-
-    public static void jump2ObbPathOfPackageName(Activity activity, int requestCode, String packageName) {
-        jump2Path(activity, requestCode, Global.URI_OBB + "%2F" + packageName);
-    }
-
-    public static void jump2Path(Activity activity, int requestCode, String uri) {
-        if (Build.VERSION.SDK_INT < 26) return;
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
-                | Intent.FLAG_GRANT_PREFIX_URI_PERMISSION);
-        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI,
-                DocumentFile.fromTreeUri(activity,
-                        Uri.parse(uri)).getUri());
-        activity.startActivityForResult(intent, requestCode);
-    }
-
     public static @Nullable
     String getResolvedPackageNameOfEntryPath(String entryPath) {
         try {
@@ -794,51 +506,5 @@ public class EnvironmentUtil {
         }
     }
 
-    /*public static String getBroadCastIpAddress(@NonNull Context context){
-        try{
-            if(isAPEnabled(context)){
-                return getRouterIpAddress(context);
-            }else return "255.255.255.255";
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return "255.255.255.255";
-    }*/
-
-    /*
-     * 当本机热点作为路由时发送广播包请求在线设备的ip地址
-     */
-    /*public static String getApHostBroadcastAddress(){
-        try{
-            String ip=getApConnectedDeviceIp();
-            return ip.substring(0,ip.lastIndexOf("."))+".255";
-        }catch (Exception e){e.printStackTrace();}
-        return "";
-    }*/
-
-    /*
-     * 获取连接本机热点设备的其中一个ip地址
-     */
-    /*private static String getApConnectedDeviceIp(){
-        try{
-            //String anIP="";
-            BufferedReader reader = new BufferedReader(new FileReader("/proc/net/arp"));
-            String line;
-            //读取第一行信息，就是IP address HW type Flags HW address Mask Device
-            while ((line = reader.readLine()) != null) {
-                String[] tokens = line.split("[ ]+");
-                if (tokens.length < 6) {
-                    continue;
-                }
-                //String ip = tokens[0]; //ip
-                return tokens[0];
-                //    String mac = tokens[3];  //mac 地址
-                //  String flag = tokens[2];//表示连接状态
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return "";
-    }*/
 
 }
