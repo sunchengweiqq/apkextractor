@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="static_receiver_filters">
+        <item>android.intent.action.LOCKED_BOOT_COMPLETED</item>
+        <item>android.intent.action.BOOT_COMPLETED</item>
+        <item>android.intent.action.USER_INITIALIZE</item>
+        <item>android.intent.action.USER_ADDED</item>
+        <item>android.intent.action.USER_REMOVED</item>
+        <item>android.intent.action.TIME_SET</item>
+        <item>android.intent.action.TIMEZONE_CHANGED</item>
+        <item>android.app.action.NEXT_ALARM_CLOCK_CHANGED</item>
+        <item>android.intent.action.LOCALE_CHANGED</item>
+        <item>android.hardware.usb.action.USB_ACCESSORY_ATTACHED</item>
+        <item>android.hardware.usb.action.USB_ACCESSORY_DETACHED</item>
+        <item>android.hardware.usb.action.USB_DEVICE_ATTACHED</item>
+        <item>android.hardware.usb.action.USB_DEVICE_DETACHED</item>
+        <item>android.bluetooth.headset.profile.action.CONNECTION_STATE_CHANGED</item>
+        <item>android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED</item>
+        <item>android.bluetooth.device.action.ACL_CONNECTED</item>
+        <item>android.bluetooth.device.action.ACL_DISCONNECTED</item>
+        <item>android.telephony.action.CARRIER_CONFIG_CHANGED</item>
+        <item>android.intent.action.PHONE_STATE</item>
+        <item>android.telecom.action.PHONE_ACCOUNT_REGISTERED</item>
+        <item>android.telecom.action.PHONE_ACCOUNT_UNREGISTERED</item>
+        <item>android.accounts.LOGIN_ACCOUNTS_CHANGED</item>
+        <item>android.intent.action.PACKAGE_DATA_CLEARED</item>
+        <item>android.intent.action.PACKAGE_FULLY_REMOVED</item>
+        <item>android.intent.action.NEW_OUTGOING_CALL</item>
+        <item>android.app.action.DEVICE_OWNER_CHANGED</item>
+        <item>android.intent.action.EVENT_REMINDER</item>
+        <item>android.intent.action.MEDIA_MOUNTED</item>
+        <item>android.intent.action.MEDIA_CHECKING</item>
+        <item>android.intent.action.MEDIA_EJECT</item>
+        <item>android.intent.action.MEDIA_UNMOUNTED</item>
+        <item>android.intent.action.MEDIA_UNMOUNTABLE</item>
+        <item>android.intent.action.MEDIA_REMOVED</item>
+        <item>android.intent.action.MEDIA_BAD_REMOVAL</item>
+        <item>android.provider.Telephony.SMS_RECEIVED</item>
+        <item>android.provider.Telephony.WAP_PUSH_RECEIVED</item>
+        <item>android.permission.RECEIVE_SMS</item>
+        <item>android.permission.RECEIVE_WAP_PUSH</item>
+    </string-array>
+</resources>

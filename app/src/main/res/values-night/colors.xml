@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorAccent">#D81B60</color>
+
+    <color name="colorTitle">#303030</color>
+    <color name="colorTitleDark">#202020</color>
+
+    <color name="colorCardArea">#000000</color>
+    <color name="colorMainBottomCard">#e7000000</color>
+    <color name="colorHighLightText">#ffffff</color>
+    <color name="color_text_normal">#cfcfcf</color>
+
+    <color name="colorDividingLine">#666666</color>
+    <color name="colorFirstAttention">#ffffff</color>
+    <color name="colorSelectedBackground">#026B02</color>
+    <color name="colorSystemAppTitleColor">#FFB6C1</color>
+    <color name="colorSharingDialogBack">#333333</color>
+    <color name="color_popup_window">#bb999999</color>
+</resources>
